@@ -1,7 +1,6 @@
 import React from "react";
 import "./SearchPage.css";
 import {withRouter} from "react-router"
-import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 class SearchPage extends React.Component {
@@ -9,6 +8,7 @@ class SearchPage extends React.Component {
         super();
         this.state={
             options : ['Name', 'Address'],
+            selected : "addy",
             //defaultOption : options[0],
             inputValue : "",    // just house number for now
             safetyInfo : [],
@@ -19,11 +19,18 @@ class SearchPage extends React.Component {
         this._handleSearchClick = this._handleSearchClick.bind(this);
         this._showData = this._showData.bind(this);
         this._handleHomeCLick = this._handleHomeCLick.bind(this);
+        this._handleSelectChange = this._handleSelectChange.bind(this);
     }
 
     _handleChange(e){
         this.setState({
-            inputValue: e.target.value
+            inputValue: e.target.value,
+            //selected : e.target.value
+        })
+    }
+    _handleSelectChange(e){
+        this.setState({
+            selected: e.target.value,
         })
     }
 
@@ -31,26 +38,36 @@ class SearchPage extends React.Component {
         window.location.href = "/"
     }
 
-    _onSelect(){}
+    _onSelect(){
+        // console.log(this.state.selected)
+        console.log('selecting woo')
+    }
 
     _showData(){
-        const data = this.state.safetyInfo
-        if(data.length !== 0){
+        if(this.state.selected === 'addy'){
+            const data = this.state.safetyInfo
+            if(data.length !== 0){
+                return(
+                    data.map(r=>{
+                                return(
+                                    <h1>{r.case_type} {r.date_case_generated}-{r.date_case_closed}</h1>
+                                    //<h1>helloooo</h1>
+                                );
+                            })
+                )
+            }
+            else if(this.state.hasSearched){
+                return(
+                    <h2>No Results Found</h2>
+                )
+            }
+        }
+        else{
             return(
-                data.map(r=>{
-                            return(
-                                <h1>{r.case_type}</h1>
-                                //<h1>helloooo</h1>
-                            );
-                        })
+                <h2>oops sorry i havent made this yet</h2>
             )
         }
-        else if(this.state.hasSearched){
-            console.log('poop')
-            return(
-                <h2>No Results Found</h2>
-            )
-        }
+        
         
     }
 
@@ -62,16 +79,9 @@ class SearchPage extends React.Component {
             .then(response => response.json())
             .then(result =>{
                 console.log(result)
+                console.log(this.state.selected)
                 this.setState({safetyInfo : result})
             })
-            // return(
-            //     this.state.safetyInfo.map(r=>{
-            //         return(
-            //             // <h1>{r.case_type}</h1>
-            //             <h1>helloooo</h1>
-            //         );
-            //     })
-            // )
         }
     }
 
@@ -83,7 +93,12 @@ class SearchPage extends React.Component {
                     <h1>Landlord Search</h1>
                 </div>
                 <div>
-                    <Dropdown options={this.state.options} onChange={this._onSelect}  placeholder="Select an option" />
+                    <div>
+                        <select onChange={this._handleSelectChange}>
+                            <option value="addy">Property Address</option>
+                            <option value="name">Landlord Name</option>
+                        </select>
+                    </div>
                     <input type = "text" value = {this.state.inputValue} placeholder = "Search for landlord and property info!" onChange = {this._handleChange}></input>
                     <button onClick={this._handleSearchClick}> Search </button>
                     <button onClick={this._showData}>log data</button>
