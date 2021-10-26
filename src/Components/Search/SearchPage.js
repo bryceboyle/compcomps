@@ -47,13 +47,6 @@ class SearchPage extends React.Component {
                     <button onClick={this._handleResourceClick}>Tenant Resources!</button>
                 </div>
                 </div>
-                <div>
-                    <div>
-                            <h2>About Us</h2>
-                            <p>??????</p>
-                    </div>
-                </div>
-                
             </div>
         )
     }

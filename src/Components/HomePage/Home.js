@@ -1,7 +1,6 @@
 import React from "react";
 import "./Home.css";
 import {withRouter} from "react-router"
-import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 class Home extends React.Component {
@@ -16,10 +15,19 @@ class Home extends React.Component {
         this._handleChange = this._handleChange.bind(this);
         this._handleResourceClick = this._handleResourceClick.bind(this);
         this._handleSearchClick = this._handleSearchClick.bind(this);
+        this._showData = this._showData.bind(this);
     }
     
 
     _onSelect(){}
+
+    _showData(){
+        fetch('https://data.lacity.org/resource/2uz8-3tj3.json?address_zip=90042') // Building and Safety Code Enforcement Case
+        .then(response => response.json())
+        .then(result =>{
+            console.log(result)
+        })
+    }
 
     _handleChange(e){
         this.setState({
@@ -40,11 +48,12 @@ class Home extends React.Component {
             <div>
                 <div>
                 <div>
-                    <h1>Landlord Lookup (name will change)</h1>
+                    <h1>Landlord POOP (name will change)</h1>
                 </div>
                 <div>
                     <button onClick={this._handleResourceClick}>Tenant Resources!</button>
                     <button onClick={this._handleSearchClick}>Search for landlord & property info!</button>
+                    <button onClick={this._showData}>log data</button>
                 </div>
                 </div>
                 <div>
