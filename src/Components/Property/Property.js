@@ -21,7 +21,7 @@ class Property extends React.Component {
     render(){
         return(
             <div>
-                
+                <h2>{this.props.date}</h2>
             </div>
         )
     }

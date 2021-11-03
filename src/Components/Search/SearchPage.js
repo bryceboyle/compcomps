@@ -2,6 +2,7 @@ import React from "react";
 import "./SearchPage.css";
 import {withRouter} from "react-router"
 import 'react-dropdown/style.css';
+import Property from "../Property/Property"
 
 class SearchPage extends React.Component {
     constructor(){
@@ -43,29 +44,41 @@ class SearchPage extends React.Component {
         console.log('selecting woo')
     }
 
+    _convertTimestamp(timestamp){
+        const date_only = '20' + timestamp.slice(2,10)
+        const month = date_only.slice(5,7)
+        const day = date_only.slice(8,10)
+        const year = date_only.slice(0,4)
+        const converted_date = month + "/" + day + "/" + year
+        return(converted_date)
+    }
+
     _showData(){
-        if(this.state.selected === 'addy'){
-            const data = this.state.safetyInfo
-            if(data.length !== 0){
+        if(this.state.hasSearched){
+            if(this.state.selected === 'addy'){
+                const data = this.state.safetyInfo
+                if(data.length !== 0){
+                    return(
+                        data.map(r=>{
+                                    return(
+                                        <div>
+                                            {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
+                                            <Property case_object={r} date={this._convertTimestamp(r.date_case_generated)} />
+                                        </div>
+                                    );
+                        }))
+                }
+                else{
+                    return(
+                        <h2>No Results Found</h2>
+                    )
+                }
+            }
+            else{
                 return(
-                    data.map(r=>{
-                                return(
-                                    <h1>{r.case_type} {r.date_case_generated}-{r.date_case_closed}</h1>
-                                    //<h1>helloooo</h1>
-                                );
-                            })
+                    <h2>oops sorry i havent made this yet</h2>
                 )
             }
-            else if(this.state.hasSearched){
-                return(
-                    <h2>No Results Found</h2>
-                )
-            }
-        }
-        else{
-            return(
-                <h2>oops sorry i havent made this yet</h2>
-            )
         }
         
         
@@ -99,9 +112,9 @@ class SearchPage extends React.Component {
                             <option value="name">Landlord Name</option>
                         </select>
                     </div>
-                    <input type = "text" value = {this.state.inputValue} placeholder = "Search for landlord and property info!" onChange = {this._handleChange}></input>
+                    <input type = "text" value = {this.state.inputValue} placeholder = "Search for property info!" onChange = {this._handleChange}></input>
                     <button onClick={this._handleSearchClick}> Search </button>
-                    <button onClick={this._showData}>log data</button>
+                    {/* <button onClick={this._showData}>log data</button> */}
                 </div>
                 <div>
                     {this._showData()}

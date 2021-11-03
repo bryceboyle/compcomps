@@ -41,7 +41,7 @@ class Home extends React.Component {
             <div>
                 <div>
                 <div>
-                    <h1>Landlord Lookup (name will change)</h1>
+                    <h1>Tenants’ Database for Transparency</h1>
                 </div>
                 <div>
                     <button onClick={this._handleResourceClick}>Tenant Resources!</button>
@@ -51,7 +51,7 @@ class Home extends React.Component {
                 <div>
                     <div>
                             <h2>About Us</h2>
-                            <p>??????</p>
+                            <p>~~~~~</p>
                     </div>
                 </div>
                 
