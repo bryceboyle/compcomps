@@ -13,7 +13,12 @@ class SearchPage extends React.Component {
             //defaultOption : options[0],
             inputValue : "",    // just house number for now
             safetyInfo : [],
-            hasSearched : false
+            heckList : [],
+            hasSearched : false,
+            case_code_dict : {"CNAP" : "Citywide Nuisance Abatement Program",  "NAR": "Nuisance Abatement Revocation", "NOID" : "Notice of Intent to Demolish",
+            "PACE" : "Pro-Active Code Enforcement", "VEIP" : "Vehicle Establishment Inspection Program", "BILLBOARDS" : "Billboards?",
+            "SIGNS" : "signs?", "XXX" : "bro who knows", "GENERAL" : "general?", "CITATIONS" : "citations?"
+            }
         }
         this._onSelect = this._onSelect.bind(this);
         this._handleChange = this._handleChange.bind(this);
@@ -21,6 +26,7 @@ class SearchPage extends React.Component {
         this._showData = this._showData.bind(this);
         this._handleHomeCLick = this._handleHomeCLick.bind(this);
         this._handleSelectChange = this._handleSelectChange.bind(this);
+        this._convertAddress = this._convertAddress.bind(this);
     }
 
     _handleChange(e){
@@ -53,17 +59,26 @@ class SearchPage extends React.Component {
         return(converted_date)
     }
 
+    _convertAddress(house_num, num_frac, street_dir, street_name, street_sufx, sufx_dir, zip){ // FIXME A MILLIION SPACES IF INFO IS MISSIING
+        const addy = house_num + num_frac + " " + street_dir + " " + street_name + " " + street_sufx + " " + sufx_dir + " " + zip
+        return(addy)
+    }
+
     _showData(){
         if(this.state.hasSearched){
-            if(this.state.selected === 'addy'){
-                const data = this.state.safetyInfo
+            if(this.state.selected === 'addy'){ // IM CHANGINF STATE.SAFETY INFO TO HECKLIST
+                const data = this.state.heckList
+                console.log(data)
                 if(data.length !== 0){
                     return(
                         data.map(r=>{
                                     return(
                                         <div>
                                             {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
-                                            <Property case_object={r} date={this._convertTimestamp(r.date_case_generated)} />
+                                            <Property case_object={r} date={this._convertTimestamp(r.date_case_generated)}
+                                            address={this._convertAddress(r.address_house_number, r.address_house_fraction_number, r.address_street_direction, r.address_street_name, r.ddress_street_suffix, r.address_street_suffix_direction, r.address_zip)}
+                                            case_type={r.case_type}
+                                            />
                                         </div>
                                     );
                         }))
@@ -85,17 +100,41 @@ class SearchPage extends React.Component {
     }
 
     _handleSearchClick(){
+        // const input = this.state.inputValue;
+        // this.setState({hasSearched : true})
+        // if(input !== ""){
+        //     fetch(`https://data.lacity.org/resource/2uz8-3tj3.json?address_house_number=${input}`) // Building and Safety Code Enforcement Case
+        //     .then(response => response.json())
+        //     .then(result =>{
+        //         console.log(result)
+        //         console.log(this.state.selected)
+        //         this.setState({safetyInfo : result})
+        //     })
+        // }
+
         const input = this.state.inputValue;
         this.setState({hasSearched : true})
-        if(input !== ""){
-            fetch(`https://data.lacity.org/resource/2uz8-3tj3.json?address_house_number=${input}`) // Building and Safety Code Enforcement Case
+        if(input !== ""){ // FIXME 400 ERROR WHEN SEARCHING "A&I" FOR CASE TYPE
+            fetch(`https://data.lacity.org/resource/2uz8-3tj3.json`) // Building and Safety Code Enforcement Case
             .then(response => response.json())
             .then(result =>{
                 console.log(result)
                 console.log(this.state.selected)
                 this.setState({safetyInfo : result})
+
+                // ------------ hecked stuff
+                const tempList = []
+                console.log(Object.keys(this.state.case_code_dict))
+                for(let i = 0; i < result.length; i++){
+                    if(Object.keys(this.state.case_code_dict).includes(result[i].case_type) === false && result[i].case_type !== "GENERAL"){
+                        tempList.push(result[i])
+                    }
+                }
+                this.setState({heckList : tempList})
             })
+            
         }
+        
     }
 
     render(){
