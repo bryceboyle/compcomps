@@ -21,7 +21,7 @@ class Property extends React.Component {
     render(){
         return(
             <div>
-                <h2>{this.props.case_type}</h2>
+                <h2>{this.props.converted_case_type}</h2>
                 <h3>{this.props.date}</h3>
                 <h4>{this.props.address}</h4>
             </div>

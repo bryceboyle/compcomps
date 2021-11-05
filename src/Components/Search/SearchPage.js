@@ -66,8 +66,8 @@ class SearchPage extends React.Component {
 
     _showData(){
         if(this.state.hasSearched){
-            if(this.state.selected === 'addy'){ // IM CHANGINF STATE.SAFETY INFO TO HECKLIST
-                const data = this.state.heckList
+            if(this.state.selected === 'addy'){
+                const data = this.state.safetyInfo
                 console.log(data)
                 if(data.length !== 0){
                     return(
@@ -77,7 +77,8 @@ class SearchPage extends React.Component {
                                             {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
                                             <Property case_object={r} date={this._convertTimestamp(r.date_case_generated)}
                                             address={this._convertAddress(r.address_house_number, r.address_house_fraction_number, r.address_street_direction, r.address_street_name, r.ddress_street_suffix, r.address_street_suffix_direction, r.address_zip)}
-                                            case_type={r.case_type}
+                                            converted_case_type={this.state.case_code_dict[r.case_type]}
+
                                             />
                                         </div>
                                     );
@@ -100,40 +101,40 @@ class SearchPage extends React.Component {
     }
 
     _handleSearchClick(){
-        // const input = this.state.inputValue;
-        // this.setState({hasSearched : true})
-        // if(input !== ""){
-        //     fetch(`https://data.lacity.org/resource/2uz8-3tj3.json?address_house_number=${input}`) // Building and Safety Code Enforcement Case
-        //     .then(response => response.json())
-        //     .then(result =>{
-        //         console.log(result)
-        //         console.log(this.state.selected)
-        //         this.setState({safetyInfo : result})
-        //     })
-        // }
-
         const input = this.state.inputValue;
         this.setState({hasSearched : true})
-        if(input !== ""){ // FIXME 400 ERROR WHEN SEARCHING "A&I" FOR CASE TYPE
-            fetch(`https://data.lacity.org/resource/2uz8-3tj3.json`) // Building and Safety Code Enforcement Case
+        if(input !== ""){
+            fetch(`https://data.lacity.org/resource/2uz8-3tj3.json?address_house_number=${input}`) // Building and Safety Code Enforcement Case
             .then(response => response.json())
             .then(result =>{
                 console.log(result)
                 console.log(this.state.selected)
                 this.setState({safetyInfo : result})
-
-                // ------------ hecked stuff
-                const tempList = []
-                console.log(Object.keys(this.state.case_code_dict))
-                for(let i = 0; i < result.length; i++){
-                    if(Object.keys(this.state.case_code_dict).includes(result[i].case_type) === false && result[i].case_type !== "GENERAL"){
-                        tempList.push(result[i])
-                    }
-                }
-                this.setState({heckList : tempList})
             })
-            
         }
+
+        // const input = this.state.inputValue;
+        // this.setState({hasSearched : true})
+        // if(input !== ""){ // FIXME 400 ERROR WHEN SEARCHING "A&I" FOR CASE TYPE
+        //     fetch(`https://data.lacity.org/resource/2uz8-3tj3.json`) // Building and Safety Code Enforcement Case
+        //     .then(response => response.json())
+        //     .then(result =>{
+        //         console.log(result)
+        //         console.log(this.state.selected)
+        //         this.setState({safetyInfo : result})
+
+        //         // ------------ hecked stuff
+        //         const tempList = []
+        //         console.log(Object.keys(this.state.case_code_dict))
+        //         for(let i = 0; i < result.length; i++){
+        //             if(Object.keys(this.state.case_code_dict).includes(result[i].case_type) === false && result[i].case_type !== "GENERAL"){
+        //                 tempList.push(result[i])
+        //             }
+        //         }
+        //         this.setState({heckList : tempList})
+        //     })
+            
+        // }
         
     }
 
