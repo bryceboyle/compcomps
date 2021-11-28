@@ -1,8 +1,8 @@
 import './App.css';
 import{
   BrowserRouter as Router,
-  Switch,
-  Route
+  Route,
+  Routes
 } from "react-router-dom";
 import Home from "./Components/HomePage/Home"
 import TenResource from "./Components/TenResourcePage/TenResource"
@@ -12,11 +12,11 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Switch>
-          <Route exact path="/"> <Home/> </Route>
-          <Route exact path="/resources"> <TenResource/> </Route>
-          <Route exact path="/search"> <SearchPage/> </Route>
-        </Switch>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+            <Route path="resources" element={<TenResource/>}/>
+            <Route path="search" element={<SearchPage/>}/>
+        </Routes>
       </Router>
     </div>
   );

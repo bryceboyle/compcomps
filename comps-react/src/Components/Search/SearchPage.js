@@ -1,8 +1,6 @@
 import React from "react";
 import "./SearchPage.css";
-import {withRouter} from "react-router"
 import 'react-dropdown/style.css';
-import Property from "../Property/Property"
 
 class SearchPage extends React.Component {
     constructor(){
@@ -179,4 +177,5 @@ class SearchPage extends React.Component {
     }
 }
 
-export default withRouter(SearchPage);
+export default SearchPage;
+// WILL NEED WITHROUTER EQUIVALENT
