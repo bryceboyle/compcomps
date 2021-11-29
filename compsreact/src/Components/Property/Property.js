@@ -9,7 +9,7 @@ class Property extends React.Component {
     }
 
     _handleClick(){
-        window.location.href = `/search/${this.propr.id}`
+        window.location.href = `/search/${this.props.id}`
     }
 
     render(){

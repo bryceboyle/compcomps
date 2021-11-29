@@ -1,6 +1,7 @@
 import React from "react";
 import "./SearchPage.css";
 import 'react-dropdown/style.css';
+import Property from "../Property/Property"
 
 class SearchPage extends React.Component {
     constructor(){
@@ -75,9 +76,9 @@ class SearchPage extends React.Component {
                                     return(
                                         <div>
                                             {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
-                                            {/* <Property case_object={r} date={this._convertTimestamp(r.date_case_generated)}
+                                            <Property case_object={r} date={this._convertTimestamp(r.date_case_generated)}
                                             address={this._convertAddress(r.address_house_number, r.address_house_fraction_number, r.address_street_direction, r.address_street_name, r.ddress_street_suffix, r.address_street_suffix_direction, r.address_zip)}
-                                            converted_case_type={this.state.case_code_dict[r.case_type]}/> */}
+                                            converted_case_type={this.state.case_code_dict[r.case_type]}/>
                                             {/* <Property id={this.state.id}/> */}
                                             {/* <h1>this.state.id</h1> */}
                                         </div>
@@ -101,6 +102,7 @@ class SearchPage extends React.Component {
     }
 
     _heck(){
+        let owner1 = ""
         fetch('http://localhost:1995/allProps/')
         .then(response => response.json())
         .then(result =>{
@@ -108,6 +110,9 @@ class SearchPage extends React.Component {
             // this.setState({
             //     id : result._id
             // })
+            owner1 = result[0].owner
+            owner1 = encodeURI(owner1)
+            window.location.href = `/search/${owner1}`
         })
     }
 

@@ -7,6 +7,8 @@ import{
 import Home from "./Components/HomePage/Home"
 import TenResource from "./Components/TenResourcePage/TenResource"
 import SearchPage from "./Components/Search/SearchPage"
+import PropertyPage from "./Components/PropertyPage/PropertyPage"
+import { match } from 'assert';
 
 function App() {
   return (
@@ -15,7 +17,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Home/>}/>
             <Route path="resources" element={<TenResource/>}/>
+            {/* <Route path="search" element={<SearchPage/>}>
+              <Route path=":id" element={<PropertyPage/>}/>
+            </Route> */}
             <Route path="search" element={<SearchPage/>}/>
+            <Route path="search/:id" element={<PropertyPage/>}/>
+            {/* <Route path="search/:id" render={({ match }) => <PropertyPage id={match.params.id} />}/> */}
         </Routes>
       </Router>
     </div>
