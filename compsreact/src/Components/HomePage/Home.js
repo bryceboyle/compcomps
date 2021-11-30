@@ -38,7 +38,8 @@ class Home extends React.Component {
             <div>
                 <div>
                 <div>
-                    <h1>Tenants’ Database for Transparency</h1>
+                    <h1>Landlord Lookup</h1>
+                    <h3>A Tenant-Focused Web Application for Rental Transparency</h3>
                 </div>
                 <div>
                     <button onClick={this._handleResourceClick}>Tenant Resources!</button>

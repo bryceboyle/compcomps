@@ -13,6 +13,7 @@ class SearchPage extends React.Component {
             inputValue : "",    // just house number for now
             safetyInfo : [],
             heckList : [],
+            hasHecked : false,
             hasSearched : false,
             case_code_dict : {"CNAP" : "Citywide Nuisance Abatement Program",  "NAR": "Nuisance Abatement Revocation", "NOID" : "Notice of Intent to Demolish",
             "PACE" : "Pro-Active Code Enforcement", "VEIP" : "Vehicle Establishment Inspection Program", "BILLBOARDS" : "Billboards?",
@@ -102,18 +103,36 @@ class SearchPage extends React.Component {
     }
 
     _heck(){
+        this.setState({hasHecked:true})
         let owner1 = ""
         fetch('http://localhost:1995/allProps/')
         .then(response => response.json())
         .then(result =>{
-            console.log(result)
+            // console.log(result)
             // this.setState({
             //     id : result._id
             // })
-            owner1 = result[0].owner
-            owner1 = encodeURI(owner1)
-            window.location.href = `/search/${owner1}`
+
+            this.setState({heckList:result})
+
+            // owner1 = result[0].owner
+            // owner1 = encodeURI(owner1)
+            // window.location.href = `/search/${owner1}`
         })
+    }
+
+    _showHeck(){
+        if(this.state.hasHecked){
+            const info = this.state.heckList
+            return(
+                info.map(r=>{
+                            return(
+                                <div>
+                                    <Property whole_object={r} id={r._id}/>
+                                </div>
+                            );
+                }))
+        }
     }
 
     _handleSearchClick(){
@@ -175,7 +194,8 @@ class SearchPage extends React.Component {
                     {/* <button onClick={this._showData}>log data</button> */}
                 </div>
                 <div>
-                    {this._showData()}
+                    {/* {this._showData()} */}
+                    {this._showHeck()}
                 </div>
             </div>
         )

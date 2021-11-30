@@ -10,6 +10,7 @@ class PropertyPage extends React.Component {
         this.state={
             id : ""
         }
+        this._handleBackClick = this._handleBackClick.bind(this);
         // this._showResults = this._showResults.bind(this);
         // this._handleStateChange = this._handleStateChange.bind(this);
     }
@@ -52,10 +53,15 @@ class PropertyPage extends React.Component {
     //     this.setState({ userEM : value })
     // }
 
+    _handleBackClick(){
+        window.location.href = "/search"
+    }
+
 
     render(){
         return(
             <div>
+                <button onClick={this._handleBackClick}> back </button> 
                 <h1>{this.state.id}</h1>
             </div>
         )
