@@ -15,6 +15,7 @@ class Property extends React.Component {
         console.log("id props " + this.props.id)
         this.setState({id: this.props.id})
         console.log(this.state.id)
+
     }
 
     _handleClick(){
@@ -29,6 +30,7 @@ class Property extends React.Component {
                 <h3>{this.props.date}</h3>
                 <h4>{this.props.address}</h4> */}
                 <h2> {this.props.id}</h2>
+                <h2> type {typeof this.props.id}</h2>
                 <h4> {JSON.stringify(this.props.whole_object)}</h4>
                 <button onClick={this._handleClick}> deeetailz </button>
             </div>

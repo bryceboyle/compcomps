@@ -8,7 +8,8 @@ class PropertyPage extends React.Component {
     constructor(){
         super();
         this.state={
-            id : ""
+            id : "",
+            propertyObj : null
         }
         this._handleBackClick = this._handleBackClick.bind(this);
         // this._showResults = this._showResults.bind(this);
@@ -19,6 +20,13 @@ class PropertyPage extends React.Component {
         let uri_id = window.location.href
         uri_id = decodeURI(uri_id.substring(uri_id.lastIndexOf("/") + 1))
         this.setState({id:uri_id})
+
+        fetch(`http://localhost:1995/properties/${uri_id}`)
+            .then(response => response.json())
+            .then(result =>{
+                console.log(JSON.stringify(result))
+                this.setState({propertyObj:result})
+            })
         // let propertyID = encodeURI(this.props.match.params.id);
         // this.setState({id:propertyID})
 
@@ -62,7 +70,7 @@ class PropertyPage extends React.Component {
         return(
             <div>
                 <button onClick={this._handleBackClick}> back </button> 
-                <h1>{this.state.id}</h1>
+                <h1>{JSON.stringify(this.state.propertyObj)}</h1>
             </div>
         )
     }

@@ -2,6 +2,7 @@ const MongoClient = require('mongodb').MongoClient;
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+var ObjectId = require('mongodb').ObjectId; 
 
 const uri = "mongodb+srv://bboyle:dbtimewoo123@cluster0.acl7h.mongodb.net/comps-db?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useUnifiedTopology: true });
@@ -14,6 +15,7 @@ let database = null;
 let collection = null;
 
 async function connectDB(){
+	console.log(client);
 	console.log("before connect")
 	await client.connect();
 	console.log("after connect")
@@ -28,7 +30,7 @@ async function connectDB(){
 connectDB();
 
 async function getAllProperties(req, res){
-	console.log("reee")
+	// console.log("reee")
 	const query = {};
 	let propCursor = await collection.find(query);
 	let props = await propCursor.toArray();
@@ -38,7 +40,20 @@ async function getAllProperties(req, res){
 	res.json(response);
 }
 
+async function getProperty(req, res){
+	let propID = new ObjectId(req.params.id);
+	console.log("id: " +propID);
+	const query = {_id : propID};
+	let propsCursor = await collection.find(query);
+	let properties = await propsCursor.toArray();
+
+	const response = properties;
+	console.log(response);
+	res.json(response);
+}
+
 app.get('/allProps', getAllProperties)
+app.get('/properties/:id', getProperty)
 
 
 app.listen(1995, function(){
