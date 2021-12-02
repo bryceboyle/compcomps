@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.css";
-import {withRouter} from "react-router"
 import 'react-dropdown/style.css';
+import GoogleBtn from "../GoogleLogin/GoogleBtn"
 
 class Home extends React.Component {
     constructor(){
@@ -9,12 +9,14 @@ class Home extends React.Component {
         this.state={
             options : ['Name', 'Address'],
             //defaultOption : options[0]
-            inputValue : ""
+            inputValue : "",
+            userEmail : ""
         }
         this._onSelect = this._onSelect.bind(this);
         this._handleChange = this._handleChange.bind(this);
         this._handleResourceClick = this._handleResourceClick.bind(this);
         this._handleSearchClick = this._handleSearchClick.bind(this);
+        this._handleStateChange = this._handleStateChange.bind(this);
     }
     
     _onSelect(){}
@@ -33,11 +35,17 @@ class Home extends React.Component {
         window.location.href = "/search"
     }
 
+    _handleStateChange(value){
+        this.setState({ userEmail : value })
+        console.log("value: " + value)
+    }
+
     render(){
         return(
             <div>
                 <div>
                 <div>
+                    <GoogleBtn _handleStateChange={this._handleStateChange}/>
                     <h1>Landlord Lookup</h1>
                     <h3>A Tenant-Focused Web Application for Rental Transparency</h3>
                 </div>

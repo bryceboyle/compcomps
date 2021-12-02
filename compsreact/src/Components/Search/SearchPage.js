@@ -2,6 +2,7 @@ import React from "react";
 import "./SearchPage.css";
 import 'react-dropdown/style.css';
 import Property from "../Property/Property"
+import GoogleBtn from "../GoogleLogin/GoogleBtn"
 
 class SearchPage extends React.Component {
     constructor(){
@@ -9,7 +10,6 @@ class SearchPage extends React.Component {
         this.state={
             options : ['Name', 'Address'],
             selected : "addy",
-            //defaultOption : options[0],
             inputValue : "",    // just house number for now
             safetyInfo : [],
             heckList : [],
@@ -19,7 +19,8 @@ class SearchPage extends React.Component {
             "PACE" : "Pro-Active Code Enforcement", "VEIP" : "Vehicle Establishment Inspection Program", "BILLBOARDS" : "Billboards?",
             "SIGNS" : "signs?", "XXX" : "bro who knows", "GENERAL" : "general?", "CITATIONS" : "citations?"
             },
-            id : "0"
+            id : "0",
+            userEmail : ""
         }
         this._onSelect = this._onSelect.bind(this);
         this._handleChange = this._handleChange.bind(this);
@@ -28,7 +29,8 @@ class SearchPage extends React.Component {
         this._handleHomeCLick = this._handleHomeCLick.bind(this);
         this._handleSelectChange = this._handleSelectChange.bind(this);
         this._convertAddress = this._convertAddress.bind(this);
-        this._heck = this._heck.bind(this)
+        this._heck = this._heck.bind(this);
+        this._handleStateChange = this._handleStateChange.bind(this);
     }
 
     _handleChange(e){
@@ -41,6 +43,11 @@ class SearchPage extends React.Component {
         this.setState({
             selected: e.target.value,
         })
+    }
+
+    _handleStateChange(value){
+        this.setState({ userEmail : value })
+        console.log("value: " + value)
     }
 
     _handleHomeCLick(){
@@ -104,20 +111,44 @@ class SearchPage extends React.Component {
 
     _heck(){
         this.setState({hasHecked:true})
-        let owner1 = ""
         fetch('http://localhost:1995/allProps/')
         .then(response => response.json())
         .then(result =>{
-            // console.log(result)
-            // this.setState({
-            //     id : result._id
-            // })
-
             this.setState({heckList:result})
 
-            // owner1 = result[0].owner
-            // owner1 = encodeURI(owner1)
-            // window.location.href = `/search/${owner1}`
+            // UPDATING FORMATTED ADDRESS IN DB
+//             for(let i =0; i<result.length; i++){
+//                 let fixedAddy = "";
+//                 if(result[i].houseNum != null){
+//                     fixedAddy = fixedAddy + result[i].houseNum
+//                 }
+//                 if(result[i].streetDirPre != null){
+//                     fixedAddy = fixedAddy + " " + result[i].streetDirPre
+//                 }
+//                 if(result[i].streetName != null){
+//                     fixedAddy = fixedAddy + " " + result[i].streetName
+//                 }
+//                 if(result[i].streetSfx != null){
+//                     fixedAddy = fixedAddy + " " + result[i].streetSfx
+//                 }
+//                 if(result[i].streetDirPost != null){
+//                     fixedAddy = fixedAddy + " " + result[i].streetDirPost
+//                 }
+//                 if(result[i].zip != null){
+//                     fixedAddy = fixedAddy + " " + result[i].zip
+//                 }
+//                 console.log(fixedAddy)
+//                 console.log(result[i]._id)
+//                 fetch(`http://localhost:1995/update/${result[i]._id}`, {
+//                     method: "POST",
+//                     headers: {'Content-Type': 'application/json'},
+//                     body: JSON.stringify({
+//                         newAddress: fixedAddy
+//                     })
+//                 })
+//             }
+
+
         })
     }
 
@@ -178,6 +209,7 @@ class SearchPage extends React.Component {
         return(
             <div>
                 <h3 onClick={this._handleHomeCLick}>Home</h3>
+                <GoogleBtn _handleStateChange={this._handleStateChange}/>
                 <div>
                     <h1>Landlord Search</h1>
                 </div>

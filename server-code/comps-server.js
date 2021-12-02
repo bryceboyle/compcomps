@@ -40,6 +40,20 @@ async function getAllProperties(req, res){
 	res.json(response);
 }
 
+async function addFormAddy(req, res){
+	const currProp = ObjectId(req.params.address);
+	const newAddy = req.body.newAddress;
+
+	const filter = {_id : currProp};
+	const updateDocument = {
+		$set:{
+			"formattedAddress" : newAddy
+		}
+	};
+	const result = await collection.updateOne(filter, updateDocument);
+	res.json(result)
+}
+
 async function getProperty(req, res){
 	let propID = new ObjectId(req.params.id);
 	console.log("id: " +propID);
@@ -54,6 +68,8 @@ async function getProperty(req, res){
 
 app.get('/allProps', getAllProperties)
 app.get('/properties/:id', getProperty)
+
+app.post('/update/:address', jsonParser, addFormAddy)
 
 
 app.listen(1995, function(){
