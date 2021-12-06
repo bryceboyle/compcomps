@@ -26,11 +26,12 @@ async function connectDB(){
     // define collections
     collection = database.collection("property-info");
     let badEntry = false;
+    let prevInfo = []
 
     let ainList = []
     let response = await fetch("https://data.lacounty.gov/resource/9trm-uz8i.json?situszip=90041&usecodedescchar1=Residential") // residential parcel info for 90041
     let result = await response.json()
-    for (var j = 0; j < 15; j++){
+    for (var j = 30; j < 45; j++){
         if(result[j] === undefined){
             console.log("sad undefined: index "+j);
         }
@@ -39,6 +40,11 @@ async function connectDB(){
     console.log(ainList)
 
     for (var i = 0; i < ainList.length; i++){
+        let tempList = [ainList[i].situshouseno, ainList[i].situsfraction, ainList[i].situsdirection, ainList[i].situsstreet, ainList[i].situszip5]
+        if(tempList === prevInfo){
+            continue;
+        }
+        prevInfo = tempList;
 
         badEntry = false;
         console.log("ain result: "+ainList[i])
