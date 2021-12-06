@@ -30,6 +30,11 @@ class PropertyPage extends React.Component {
                 console.log(JSON.stringify(result))
                 this.setState({propertyObj:result, formAdd:result[0].formattedAddress})
             })
+        // fetch(`http://localhost:1995/test/lessHour`)
+        //     .then(response => response.json())
+        //     .then(result =>{
+        //         console.log(JSON.stringify(result))
+        //     })
     }
 
 
@@ -43,14 +48,14 @@ class PropertyPage extends React.Component {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({})
          })
-            .then(
-                fetch(`http://localhost:1995/users/${value}`)
-                    .then(response => response.json())
-                    .then(result =>{
-                        console.log(JSON.stringify(result))
-                        this.setState({userID: result[0]._id})
-            })
-            )
+            // .then(
+            //     fetch(`http://localhost:1995/users/${value}`)
+            //         .then(response => response.json())
+            //         .then(result =>{
+            //             console.log(JSON.stringify(result))
+            //             this.setState({userID: result[0]._id})
+            //     })
+            // )
     }
 
     _handleBackClick(){
@@ -62,8 +67,15 @@ class PropertyPage extends React.Component {
             this.setState({hasClicked : true})
         }
         else{
-            console.log(this.state.userID)
-            window.location.href = `/review/${this.state.id + "-" +this.state.userID}`
+            fetch(`http://localhost:1995/users/${this.state.userEmail}`)
+                    .then(response => response.json())
+                    .then(result =>{
+                        console.log(JSON.stringify(result))
+                        this.setState({userID: result[0]._id})
+                        console.log(this.state.userID)
+                        window.location.href = `/review/${this.state.id + "-" +this.state.userID}`
+                    })
+            
         }
     }
 

@@ -17,7 +17,8 @@ class SubmitReviewPage extends React.Component {
             rentInput : "",
             pictureLink : "",
             hasSubmitted : false,
-            isValid : false
+            isValid : false,
+            userid : ""
         }
         this._handleCancelClick = this._handleCancelClick.bind(this);
         this._handleSubmitClick = this._handleSubmitClick.bind(this);
@@ -79,6 +80,7 @@ class SubmitReviewPage extends React.Component {
             uri_user = decodeURI(uri.substring(uri.lastIndexOf("-") + 1))
         }
         console.log(uri_user)
+        this.setState({userid : uri_user})
         fetch(`http://localhost:1995/properties/${uri_id}`)
             .then(response => response.json())
             .then(result =>{
@@ -131,6 +133,7 @@ class SubmitReviewPage extends React.Component {
                 console.log("is valid")
 
                 let revObj = {
+                    userID : this.state.userid,
                     propID : this.state.propertyObj[0]._id,
                     rTime : this.state.selected,
                     LLName : this.state.LLname,
@@ -141,7 +144,7 @@ class SubmitReviewPage extends React.Component {
                 };
                 console.log("email: "+this.state.userEmail)
                 console.log("type:" + typeof this.state.userEmail)
-                fetch(`http://localhost:1995/postReview/${this.state.userEmail}`, {
+                fetch(`http://localhost:1995/postReview/${this.state.userid}`, {
                     method: "POST",
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({

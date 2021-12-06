@@ -26,6 +26,7 @@ async function connectDB(){
 	// define collections
 	propCollection = database.collection("property-info");
 	userCollection = database.collection("user-acct-info");
+	revCollection = database.collection("reviews");
 	
 
 }
@@ -78,49 +79,49 @@ async function addFormAddy(req, res){
 async function postReview(req, res){
 	console.log("IM POSTING a REVIEW")
 
+	let userid = new ObjectId(req.params.userID);
+	const postResult = await revCollection.insertOne(req.body.reviewObj);
+	res.json(postResult)
+	let revId = JSON.stringify(postResult.insertedId);
+
 	// check for existing user
-	let userEmail = req.params.email;
 	let revList = [];
-	const query = {email : userEmail};
+	const query = {_id : userid};
 	let userCursor = await userCollection.find(query);
 	let properties = await userCursor.toArray();
-	// if(Object.keys(properties).length===0){
-	// 	console.log("not found")
-	// 	const result = await userCollection.insertOne({email : userEmail});
-	// 	res.json(result)
-	// }
+	console.log("revid " +revId)
 	if(properties[0].reviewList === undefined){
-		const filter = {email : userEmail};
+		console.log("no list. before creating")
+		const filter = {_id : userid};
 		const updateDocument = {
 			$set:{
 				reviewList : []
 			}
 		};
+		console.log("no list. after defining update doc")
 		const result = await userCollection.updateOne(filter, updateDocument);
-		res.json(result)
+		// res.json(result)
+		console.log("no list. after creating")
 	}
 	else{
 		revList = properties[0].reviewList
 		console.log("PROP OF 0" + JSON.stringify(properties[0]))
 	}
-	revList.push(req.body.reviewObj)
+	console.log("list made. before pushing rev id")
+	await revList.push(revId)
+	console.log("after pushing rev id")
+	console.log("list "+revList)
 	console.log("yes email")
-	// const propID = req.body.propID
-	// const rTime = req.body.rTime;
-	// const LLName = req.body.LLName;
-	// const LLRev = req.body.LLRev;
-	// const rent = req.body.rent;
-	// const propRev = req.body.propRev;
-	// const pictures = req.body.pictures;
+	
 
-	const filter = {email : userEmail};
+	const filter = {_id : userid};
 	const updateDocument = {
 		$set:{
 			reviewList : revList
 		}
 	};
 	const result = await userCollection.updateOne(filter, updateDocument);
-	res.json(result);
+	// res.json(result);
 
 	
 
@@ -164,14 +165,27 @@ async function getUserFromID(req, res){
 	res.json(response);
 }
 
+async function test(req, res){
+	let userID = req.params.time;
+	console.log("user id: " + userID);
+	const query = {"reviewList.rTime" : userID};
+	let userCursor = await userCollection.find(query);
+	let user = await userCursor.toArray();
+
+	const response = user;
+	console.log(response);
+	res.json(response);
+}
+
 app.get('/allProps', getAllProperties)
 app.get('/properties/:id', getProperty)
 app.get('/users/:email', getUser)
 app.get('/userID/:id', getUserFromID)
+app.get('/test/:time', test)
 
 app.post('/create/:email', jsonParser, createNewUser)
 app.post('/update/:address', jsonParser, addFormAddy)
-app.post('/postReview/:email', jsonParser, postReview)
+app.post('/postReview/:userID', jsonParser, postReview)
 
 
 app.listen(1995, function(){
