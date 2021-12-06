@@ -67,28 +67,47 @@ class SubmitReviewPage extends React.Component {
     }
 
     componentDidMount(){
-        let uri_id = window.location.href
-        uri_id = decodeURI(uri_id.substring(uri_id.lastIndexOf("/") + 1))
+        let uri = window.location.href
+        let uri_id = ""
+        let uri_user = ""
+        if(uri.lastIndexOf("-") === -1){
+            // jk this will never happen lol
+            uri_id = decodeURI(uri.substring(uri.lastIndexOf("/") + 1))
+        }
+        else{
+            uri_id = decodeURI(uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("-")))
+            uri_user = decodeURI(uri.substring(uri.lastIndexOf("-") + 1))
+        }
+        console.log(uri_user)
         fetch(`http://localhost:1995/properties/${uri_id}`)
             .then(response => response.json())
             .then(result =>{
                 console.log(JSON.stringify(result))
                 this.setState({propertyObj:result, formAdd:result[0].formattedAddress, owner:result[0].owner})
             })
+
+        fetch(`http://localhost:1995/userID/${uri_user}`)
+            .then(response => response.json())
+            .then(result =>{
+                console.log("user "+JSON.stringify(result))
+                this.setState({userEmail : result[0].email})
+            })
     }
 
     _getReviewResponse(){
-        if(this.state.selected === "select"){
-            return "Please select a landlord response time"
-        }
-        if(this.state.rentInput === ""){
-            return "Please enter a rent price"
-        }
-        if(!Number.isInteger(parseInt(this.state.rentInput))){
-            return "Rent price can only be a whole number"
-        }
-        if(!this.state.isValid){
-            this.setState({isValid : true});
+        if(this.state.hasSubmitted){
+            if(this.state.selected === "select"){
+                return "Please select a landlord response time"
+            }
+            if(this.state.rentInput === ""){
+                return "Please enter a rent price"
+            }
+            if(!Number.isInteger(parseInt(this.state.rentInput))){
+                return "Rent price can only be a whole number"
+            }
+            if(!this.state.isValid){
+                this.setState({isValid : true});
+            }
         }
         
         return ""
@@ -103,12 +122,32 @@ class SubmitReviewPage extends React.Component {
         this.setState({hasSubmitted:true});
         // post to db!
         if(this.state.isValid){
-                console.log("response time: " + this.state.selected)
-                console.log("LL: " + this.state.LLname)
-                console.log("LL rev: " + this.state.generalLLReview)
-                console.log("rent: " + this.state.rentInput)
-                console.log("prop rev: " + this.state.generalPropReview)
-                window.location.href = `/search/${this.state.propertyObj[0]._id}`
+                // console.log("response time: " + this.state.selected)
+                // console.log("LL: " + this.state.LLname)
+                // console.log("LL rev: " + this.state.generalLLReview)
+                // console.log("rent: " + this.state.rentInput)
+                // console.log("prop rev: " + this.state.generalPropReview)
+                // window.location.href = `/search/${this.state.propertyObj[0]._id}`
+                console.log("is valid")
+
+                let revObj = {
+                    propID : this.state.propertyObj[0]._id,
+                    rTime : this.state.selected,
+                    LLName : this.state.LLname,
+                    LLRev : this.state.generalLLReview,
+                    rent : this.state.rentInput,
+                    propRev : this.state.generalPropReview,
+                    pics : this.state.pictureLink
+                };
+                console.log("email: "+this.state.userEmail)
+                console.log("type:" + typeof this.state.userEmail)
+                fetch(`http://localhost:1995/postReview/${this.state.userEmail}`, {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        reviewObj : revObj
+                       })
+                 })
         }
         else{
             console.log("something is hecked")
@@ -147,10 +186,7 @@ class SubmitReviewPage extends React.Component {
                     <button onClick={this._handleSubmitClick}> submit </button>
                     <button onClick={this._handleCancelClick}> cancel </button>
                 </div>
-                {(this.state.hasSubmitted)?
                     <div>{this._getReviewResponse()}</div>
-                : ""
-                }   
             </div>
         )
     }

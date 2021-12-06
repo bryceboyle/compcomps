@@ -11,7 +11,9 @@ class PropertyPage extends React.Component {
             id : "",
             propertyObj : null,
             formAdd : "",
-            userEmail : ""
+            userEmail : "",
+            hasClicked : false,
+            userID : ""
         }
         this._handleBackClick = this._handleBackClick.bind(this);
         this._handleStateChange = this._handleStateChange.bind(this);
@@ -34,6 +36,21 @@ class PropertyPage extends React.Component {
     _handleStateChange(value){
         this.setState({ userEmail : value })
         console.log("value: " + value)
+        console.log("type " + typeof value)
+            
+        fetch(`http://localhost:1995/create/${value}`, {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({})
+         })
+            .then(
+                fetch(`http://localhost:1995/users/${value}`)
+                    .then(response => response.json())
+                    .then(result =>{
+                        console.log(JSON.stringify(result))
+                        this.setState({userID: result[0]._id})
+            })
+            )
     }
 
     _handleBackClick(){
@@ -41,7 +58,13 @@ class PropertyPage extends React.Component {
     }
 
     _handleReviewClick(){
-        window.location.href = `/review/${this.state.id}`
+        if(this.state.userEmail === "" && !this.state.hasClicked){
+            this.setState({hasClicked : true})
+        }
+        else{
+            console.log(this.state.userID)
+            window.location.href = `/review/${this.state.id + "-" +this.state.userID}`
+        }
     }
 
     render(){
