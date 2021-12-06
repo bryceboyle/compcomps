@@ -54,7 +54,8 @@ class Property extends React.Component {
                 <h3>{this.props.date}</h3>
                 <h4>{this.props.address}</h4> */}
                 <h2> {this.state.formattedAddress}</h2>
-                <h4> {JSON.stringify(this.props.whole_object)}</h4>
+                <h4> {this.props.whole_object.owner}</h4>
+                <h4> rating: {this.props.whole_object.overallRating}</h4>
                 <button onClick={this._handleClick}> deeetailz </button>
             </div>
         )

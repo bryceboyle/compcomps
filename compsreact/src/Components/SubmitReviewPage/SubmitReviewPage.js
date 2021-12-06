@@ -162,7 +162,7 @@ class SubmitReviewPage extends React.Component {
         return(
             <div>
                 <h2>Submit a review for {this.state.formAdd}</h2>
-                <div>On average, how long does it take for your landlord to resopnd to your calls or messages?</div>
+                <div>On average, how long does it take for your landlord to respond to your calls or messages?</div>
                 <div>
                     <select onChange={this._handleSelectChange}>
                         {/* make sure that they can't submit if "select" is selected */}

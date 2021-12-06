@@ -12,9 +12,10 @@ class Review extends React.Component {
     }
 
     componentDidMount(){
-        console.log("id props " + this.props.id)
-        this.setState({id: this.props.id})
-        console.log(this.state.id)
+        console.log("obj props " + JSON.stringify(this.props.review_object))
+        console.log("type props " + JSON.stringify(this.props.type))
+        // this.setState({id: this.props.id})
+        // console.log(this.state.id)
 
     }
 
@@ -26,13 +27,8 @@ class Review extends React.Component {
     render(){
         return(
             <div>
-                {/* <h2>{this.props.converted_case_type}</h2>
-                <h3>{this.props.date}</h3>
-                <h4>{this.props.address}</h4> */}
-                <h2> {this.props.id}</h2>
-                <h2> type {typeof this.props.id}</h2>
-                <h4> {JSON.stringify(this.props.whole_object)}</h4>
-                <button onClick={this._handleClick}> deeetailz </button>
+                <h2> im a review! </h2>
+                <p>rent: {this.props.review_object.rent}</p>
             </div>
         )
     }

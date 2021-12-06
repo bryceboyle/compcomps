@@ -165,6 +165,18 @@ async function getUserFromID(req, res){
 	res.json(response);
 }
 
+async function getRevFromProp(req, res){
+	let propId = req.params.propID;
+	console.log("user id: " + propId);
+	const query = {propID : propId};
+	let userCursor = await revCollection.find(query);
+	let user = await userCursor.toArray();
+
+	const response = user;
+	console.log(response);
+	res.json(response);
+}
+
 async function test(req, res){
 	let userID = req.params.time;
 	console.log("user id: " + userID);
@@ -182,6 +194,7 @@ app.get('/properties/:id', getProperty)
 app.get('/users/:email', getUser)
 app.get('/userID/:id', getUserFromID)
 app.get('/test/:time', test)
+app.get('/reviews/:propID', getRevFromProp)
 
 app.post('/create/:email', jsonParser, createNewUser)
 app.post('/update/:address', jsonParser, addFormAddy)
