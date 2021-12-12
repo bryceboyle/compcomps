@@ -67,7 +67,13 @@ class Property extends React.Component {
 
     _handleClick(){
         console.log(this.state.test)
-        window.location.href = `/property/${this.state.id}`
+        if(this.props.userID === ""){
+            window.location.href = `/property/${this.state.id}`
+        }
+        else{
+            window.location.href = `/property/${this.state.id}-${this.props.userID}` 
+        }
+        
     }
 
     render(){

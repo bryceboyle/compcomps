@@ -119,7 +119,7 @@ class SearchPage extends React.Component {
                                     return(
                                         <div>
                                             {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
-                                            <Property whole_object={r} id={r._id}/>
+                                            <Property whole_object={r} id={r._id} userID={this.state.userID}/>
                                             {/* <Property id={this.state.id}/> */}
                                             {/* <h1>this.state.id</h1> */}
                                         </div>
