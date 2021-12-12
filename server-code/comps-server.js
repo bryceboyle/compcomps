@@ -16,7 +16,7 @@ let propCollection = null;
 let userCollection = null;
 
 async function connectDB(){
-	console.log(client);
+	// console.log(client);
 	console.log("before connect")
 	await client.connect();
 	console.log("after connect")
@@ -65,6 +65,7 @@ async function createNewUser(req, res){
 async function addFormAddy(req, res){
 	const currProp = ObjectId(req.params.address);
 	const newAddy = req.body.newAddress;
+	console.log
 
 	const filter = {_id : currProp};
 	const updateDocument = {
@@ -127,8 +128,6 @@ async function postReview(req, res){
 
 }
 
-
-
 async function getProperty(req, res){
 	let propID = new ObjectId(req.params.id);
 	console.log("id: " +propID);
@@ -179,8 +178,9 @@ async function getRevFromProp(req, res){
 
 async function getPropFromAddy(req, res){
 	let addy = req.params.address;
+	let RE = new RegExp(addy, "i")
 	console.log("address: " + addy);
-	const query = {formattedAddress : addy};
+	const query = {formattedAddress : RE};
 	let userCursor = await propCollection.find(query);
 	let user = await userCursor.toArray();
 
@@ -200,17 +200,47 @@ async function getRevFromUser(req, res){
 	console.log(response);
 	res.json(response);
 }
+async function ree(req, res){
+	let propID = new ObjectId(req.params.id);
+	// console.log("id: " +propID);
+	const query = {owner : /gan link/i};
+	let propsCursor = await propCollection.find(query);
+	let properties = await propsCursor.toArray();
+
+	const response = properties;
+	console.log(response);
+	res.json(response);
+}
 
 async function getRevFromOwner(req, res){
-	// let userid = req.params.userID;
-	// console.log("user: " + userid);
-	// const query = {userID : userid};
-	// let userCursor = await revCollection.find(query);
-	// let user = await userCursor.toArray();
+	let userid = req.params.owner;
+	console.log("owner: " + userid);
+	// let meep = userid === "gan"
+	// console.log("equal? "+meep)
+	let testRE = new RegExp(userid, "i")
+	const query = {owner : testRE};
+	console.log("query: "+JSON.stringify(query))
+	let userCursor = await propCollection.find(query);
+	let user = await userCursor.toArray();
+	console.log("properties: "+JSON.stringify(user))
+	// let meep = userid === user[0].owner
+	// console.log("equal? "+meep)
+	let reviews = []
 
-	// const response = user;
-	// console.log(response);
-	// res.json(response);
+	for(let i = 0; i<user.length; i++){
+		const query2 = {propID : user[i]._id.toString()};
+		console.log("ids: "+user[i]._id)
+		let cursor = await revCollection.find(query2);
+		let temp = await cursor.toArray();
+		console.log("temp: "+temp)
+		for(let j = 0; j<temp.length;j++){
+			reviews.push(temp[j])
+		}
+	}
+
+	const response = reviews;
+	console.log(response);
+	res.json(response);
 }
 
 async function suggestLL(req, res){
@@ -263,6 +293,7 @@ app.get('/reviews/:propID', getRevFromProp)
 app.get('/props/:address', getPropFromAddy)
 app.get('/account/:userID', getRevFromUser)
 app.get('/ownerSearch/:owner', getRevFromOwner)
+app.get('/meep', ree)
 
 app.post('/create/:email', jsonParser, createNewUser)
 app.post('/update/:address', jsonParser, addFormAddy)

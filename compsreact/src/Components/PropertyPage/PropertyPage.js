@@ -25,7 +25,8 @@ class PropertyPage extends React.Component {
             quality: "",
             needLogin : false,
             reviewList : [],
-            isLoggedIn : false
+            isLoggedIn : false,
+            LLlist : []
         }
         this._handleBackClick = this._handleBackClick.bind(this);
         this._handleStateChange = this._handleStateChange.bind(this);
@@ -50,7 +51,7 @@ class PropertyPage extends React.Component {
             .then(response => response.json())
             .then(result =>{
                 console.log(JSON.stringify(result))
-                this.setState({propertyObj:result, formAdd:result[0].formattedAddress, owner:result[0].owner, quality:result[0].quality})
+                this.setState({propertyObj:result, formAdd:result[0].formattedAddress, owner:result[0].owner, quality:result[0].quality, LLlist:result[0].LL_list})
             })
         fetch(`http://localhost:1995/reviews/${uri_id}`)
             .then(response => response.json())
@@ -153,6 +154,20 @@ class PropertyPage extends React.Component {
                 {/* <h1>{JSON.stringify(this.state.propertyObj)}</h1> */}
                 <h2>address: {this.state.formAdd}</h2>
                 <h3>owner: {this.state.owner}</h3>
+                {(this.state.LLlist !== undefined)?
+                    (this.state.LLlist.length > 1)?
+                        <div>
+                            <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
+                            <h3>other suggested names: {this.state.LLlist.slice(1)}</h3>
+                        </div>
+                    :<div>
+                        <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
+                    </div>
+                : ""
+                
+                
+                }
+                
                 <h3>quality: {this.state.quality}</h3>
                 {/* <img id="propimg" src={"https://static01.nyt.com/images/2021/09/14/science/07CAT-STRIPES/07CAT-STRIPES-mediumSquareAt3X-v2.jpg"} alt="property"/> */}
                 <button onClick={this._handleReviewClick}> submit a review </button>

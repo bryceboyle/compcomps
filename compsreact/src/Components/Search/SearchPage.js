@@ -11,7 +11,7 @@ class SearchPage extends React.Component {
             options : ['Name', 'Address'],
             selected : "addy",
             inputValue : "",    // just house number for now
-            propertyList : [],
+            displayedList : [],
             heckList : [],
             hasHecked : false,
             hasSearched : false,
@@ -22,7 +22,8 @@ class SearchPage extends React.Component {
             id : "0",
             userEmail : "",
             userID : "",
-            isLoggedIn : false
+            isLoggedIn : false,
+            revPropDict : {}
         }
         this._onSelect = this._onSelect.bind(this);
         this._handleChange = this._handleChange.bind(this);
@@ -33,6 +34,9 @@ class SearchPage extends React.Component {
         this._convertAddress = this._convertAddress.bind(this);
         this._heck = this._heck.bind(this);
         this._handleStateChange = this._handleStateChange.bind(this);
+        this._getFormAddy = this._getFormAddy.bind(this);
+        this._frickle = this._frickle.bind(this);
+        this._getPropURI = this._getPropURI.bind(this);
     }
 
     componentDidMount(){
@@ -103,25 +107,55 @@ class SearchPage extends React.Component {
         return(converted_date)
     }
 
-    _convertAddress(house_num, num_frac, street_dir, street_name, street_sufx, sufx_dir, zip){ // FIXME A MILLIION SPACES IF INFO IS MISSIING
+    _convertAddress(house_num, num_frac, street_dir, street_name, street_sufx, sufx_dir, zip){ // FIXME unused
         const addy = house_num + num_frac + " " + street_dir + " " + street_name + " " + street_sufx + " " + sufx_dir + " " + zip
         return(addy)
+    }
+
+    _getPropURI(id){
+        let newURI = "/property/" + id
+        if(this.state.isLoggedIn){
+            newURI += "-"+this.state.userID
+        }
+        return newURI
+    }
+
+    _getFormAddy(id){ //FIXME unused??
+        console.log("id "+id)
+        let temp = "frackle"
+        fetch(`http://localhost:1995/properties/${id}`)
+            .then(response => response.json())
+            .then(result =>{
+                console.log("res: "+ JSON.stringify(result))
+                if(result.length > 0){
+                    console.log("addd: "+result[0].formattedAddress)
+                    temp = result[0].formattedAddress
+                    this._frickle(temp)
+                }
+                else{
+                    console.log("not found")
+                    temp = "-1"
+                }                
+            })
+        
+    }
+
+    _frickle(thing){ //FIXME unused??
+        console.log("im a thing "+thing)
+        return thing
     }
 
     _showData(){
         if(this.state.hasSearched){
             if(this.state.selected === 'addy'){
-                const data = this.state.propertyList
+                const data = this.state.displayedList
                 console.log(data)
                 if(data.length !== 0){
                     return(
                         data.map(r=>{
                                     return(
                                         <div>
-                                            {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
                                             <Property whole_object={r} id={r._id} userID={this.state.userID}/>
-                                            {/* <Property id={this.state.id}/> */}
-                                            {/* <h1>this.state.id</h1> */}
                                         </div>
                                     );
                         }))
@@ -133,19 +167,23 @@ class SearchPage extends React.Component {
                 }
             }
             else{
-                const data = this.state.propertyList
-                console.log(data)
+                const data = this.state.displayedList
+                // console.log(data)
                 if(data.length !== 0){
                     return(
-                        data.map(r=>{
-                                    return(
-                                        <div>
-                                            {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
-                                            <Property whole_object={r} id={r._id}/>
-                                            {/* <Property id={this.state.id}/> */}
-                                            {/* <h1>this.state.id</h1> */}
-                                        </div>
-                                    );
+                        data.map(r=>{                        
+                            return(
+                                <div>
+                                    <a href={this._getPropURI(r.propID)}>{this.state.revPropDict[r._id]}</a>
+                                    <h3>Response time: {r.rTime}</h3>
+                                    {(r.LLRev !== "")?
+                                    <h3>Review: {r.LLRev}</h3>
+                                    : ""
+                                    }
+                                                                        
+                                </div>
+                            );
+                                    
                         }))
                 }
                 else{
@@ -155,8 +193,6 @@ class SearchPage extends React.Component {
                 }
             }
         }
-        
-        
     }
 
     _heck(){
@@ -217,29 +253,47 @@ class SearchPage extends React.Component {
                 .then(response => response.json())
                 .then(result =>{
                     console.log("input "+input)
-                    console.log(result)
+                    // console.log(result)
                     console.log(this.state.selected)
-                    this.setState({propertyList : result})
+                    this.setState({displayedList : result})
                 })
             }
             else{
                 fetch("http://localhost:1995/allProps")
                 .then(response => response.json())
                 .then(result =>{
-                    console.log(result)
+                    // console.log(result)
                     console.log(this.state.selected)
-                    this.setState({propertyList : result})
+                    this.setState({displayedList : result})
                 })
             }
         }
-        // if(this.state.selected === "name"){
-        //     if(input !== ""){
+        if(this.state.selected === "name"){
+            if(input !== ""){
+                fetch(`http://localhost:1995/ownerSearch/${input}`)
+                    .then(response => response.json())
+                    .then(result =>{
+                        // console.log("1st res "+JSON.stringify(result))
+                        console.log(this.state.selected)
+                        this.setState({displayedList : result})
+                        for(let k=0;k<result.length;k++){
+                            fetch(`http://localhost:1995/properties/${result[k].propID}`)
+                                .then(response => response.json())
+                                .then(result2 =>{
+                                    // console.log("2nd res "+JSON.stringify(result2))
+                                    console.log("formAddy "+result2[0].formattedAddress)
+                                    let tempObj = this.state.revPropDict
+                                    tempObj[result[k]._id] = result2[0].formattedAddress
+                                    console.log("reererrecc "+JSON.stringify(tempObj))
+                                    this.setState({revPropDict:tempObj})
+                                })
+                        }
+                    })
+            }
+            else{
 
-        //     }
-        //     else{
-
-        //     }
-        // }
+            }
+        }
         
     }
 
@@ -267,6 +321,7 @@ class SearchPage extends React.Component {
                     {/* <button onClick={this._heck}> heck </button> */}
                     {/* <button onClick={this._showData}>log data</button> */}
                 </div>
+                
                 <div>
                     {/* {this._showData()} */}
                     {this._showData()}
