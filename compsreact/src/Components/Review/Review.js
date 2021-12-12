@@ -27,8 +27,13 @@ class Review extends React.Component {
     render(){
         return(
             <div>
-                <h2> im a review! </h2>
+                <h2> review: </h2>
+                <p>overall rating: {this.props.review_object.overallRating}</p>
                 <p>rent: {this.props.review_object.rent}</p>
+                <p>property review: {this.props.review_object.propRev}</p>
+                <p>response time: {this.props.review_object.rTime}</p>
+                <p>landlord review: {this.props.review_object.LLRev}</p>
+                <p>pictures: {this.props.review_object.pics}</p>
             </div>
         )
     }

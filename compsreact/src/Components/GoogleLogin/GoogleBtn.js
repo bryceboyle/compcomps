@@ -12,13 +12,34 @@ class GoogleBtn extends Component {
             isLoggedIn : false,
             accessToken: '',
             isSignedIn : false,
-            userEmail : ''
+            userEmail : '',
+            loginCounter : 0
         };
 
         this.login = this.login.bind(this);
         this.handleLoginFailure = this.handleLoginFailure.bind(this);
         this.logout = this.logout.bind(this);
         this.handleLogoutFailure = this.handleLogoutFailure.bind(this);
+        this._handleLogin = this._handleLogin.bind(this);
+    }
+
+    componentDidMount(){
+        console.log("PROPS: " + this.props.isLoggedIn)
+        // if(this.props.isLoggedIn){
+        //     this.setState({isLoggedIn:true, isSignedIn:true})
+        // }
+    }
+
+    _handleLogin(){
+        let temp = this.state.loginCounter;
+        if(!this.state.isLoggedIn && temp < 1){
+            console.log("LOGGIN IN")
+            temp += 1;
+            this.setState({isLoggedIn:true, isSignedIn:true, loginCounter:temp})
+        }
+        else{
+            console.log("called but not goin in")
+        }
     }
 
     login(response){
@@ -59,6 +80,10 @@ class GoogleBtn extends Component {
     render(){
         return(
             <div id="Gbutton">
+                {this.props.isLoggedIn ?
+                    this._handleLogin()
+                    : ""
+                }
                 {this.state.isLoggedIn ?
                     <GoogleLogout
                     clientId={CLIENT_ID}

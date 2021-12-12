@@ -31,13 +31,15 @@ async function connectDB(){
     let ainList = []
     let response = await fetch("https://data.lacounty.gov/resource/9trm-uz8i.json?situszip=90041&usecodedescchar1=Residential") // residential parcel info for 90041
     let result = await response.json()
-    for (var j = 30; j < 45; j++){
+    for (var j = 74; j < 84; j++){
         if(result[j] === undefined){
             console.log("sad undefined: index "+j);
         }
         ainList.push(result[j]["assessorid"])
     }
     console.log(ainList)
+
+    // bro this doesn't work bc its just a list of AINs not property objects... there are still repeats
 
     for (var i = 0; i < ainList.length; i++){
         let tempList = [ainList[i].situshouseno, ainList[i].situsfraction, ainList[i].situsdirection, ainList[i].situsstreet, ainList[i].situszip5]
@@ -59,25 +61,38 @@ async function connectDB(){
             // *** getting property information from Estated ***
         response = await fetch(`https://apis.estated.com/v4/property?token=zYYAQpDilG79vjLEvZLDIUDrNtaKGB&fips=06037&apn=${newObj["ain"]}`)
         result = await response.json()
+        // console.log(JSON.stringify(result))
         console.log("estated data result street: " + result.data.address.street_name)
+            
+        if(result.data.address !== null && result.data.address !== undefined){
             // adding house number to property object
-        newObj["houseNum"] = result.data.address.street_number
-        // adding (pre) street direction to property object
-        newObj["streetDirPre"] = result.data.address.street_pre_direction
-        // adding street name to property object
-        newObj["streetName"] = result.data.address.street_name
-        // adding street suffix to property object
-        newObj["streetSfx"] = result.data.address.street_suffix
-        // adding (post) street direction to property object
-        newObj["streetDirPost"] = result.data.address.street_post_direction
-        // adding unit number to property object
-        newObj["unitNum"] = result.data.address.unit_number
-        // adding zipcode to property object
-        newObj["zip"] = result.data.address.zip_code
-        // adding quality?? to property object
-        newObj["quality"] = result.data.structure.quality
-        // adding owner(s) to property object
-        newObj["owner"] = result.data.owner.name
+            newObj["houseNum"] = result.data.address.street_number
+            // adding (pre) street direction to property object
+            newObj["streetDirPre"] = result.data.address.street_pre_direction
+            // adding street name to property object
+            newObj["streetName"] = result.data.address.street_name
+            // adding street suffix to property object
+            newObj["streetSfx"] = result.data.address.street_suffix
+            // adding (post) street direction to property object
+            newObj["streetDirPost"] = result.data.address.street_post_direction
+            // adding unit number to property object
+            newObj["unitNum"] = result.data.address.unit_number
+            // adding zipcode to property object
+            newObj["zip"] = result.data.address.zip_code
+        }
+        if(result.data.structure !== null && result.data.structure !== undefined){
+            // adding quality?? to property object
+            newObj["quality"] = result.data.structure.quality
+        }
+        if(result.data.owner !== null && result.data.owner !== undefined){
+            // adding owner(s) to property object
+            newObj["owner"] = result.data.owner.name
+        }
+
+        // if it doesn't have this data, can't gather any more from other APIs
+        if(newObj["houseNum"] === undefined || newObj["streetName"] === undefined || newObj["streetSfx"] === undefined || newObj["zip"] === undefined){
+            break
+        }
 
         response = await fetch(`https://data.lacity.org/resource/2uz8-3tj3.json?address_house_number=${newObj["houseNum"]}&address_street_name=${newObj["streetName"]}&address_street_suffix=${newObj["streetSfx"]}&address_zip=${newObj["zip"]}`)
         result = await response.json()

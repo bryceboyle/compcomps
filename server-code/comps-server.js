@@ -37,7 +37,7 @@ async function getAllProperties(req, res){
 	const query = {};
 	let propCursor = await propCollection.find(query);
 	let props = await propCursor.toArray();
-	console.log(props);
+	// console.log(props);
 
 	const response = props;
 	res.json(response);
@@ -177,11 +177,11 @@ async function getRevFromProp(req, res){
 	res.json(response);
 }
 
-async function test(req, res){
-	let userID = req.params.time;
-	console.log("user id: " + userID);
-	const query = {"reviewList.rTime" : userID};
-	let userCursor = await userCollection.find(query);
+async function getPropFromAddy(req, res){
+	let addy = req.params.address;
+	console.log("address: " + addy);
+	const query = {formattedAddress : addy};
+	let userCursor = await propCollection.find(query);
 	let user = await userCursor.toArray();
 
 	const response = user;
@@ -189,16 +189,85 @@ async function test(req, res){
 	res.json(response);
 }
 
+async function getRevFromUser(req, res){
+	let userid = req.params.userID;
+	console.log("user: " + userid);
+	const query = {userID : userid};
+	let userCursor = await revCollection.find(query);
+	let user = await userCursor.toArray();
+
+	const response = user;
+	console.log(response);
+	res.json(response);
+}
+
+async function getRevFromOwner(req, res){
+	// let userid = req.params.userID;
+	// console.log("user: " + userid);
+	// const query = {userID : userid};
+	// let userCursor = await revCollection.find(query);
+	// let user = await userCursor.toArray();
+
+	// const response = user;
+	// console.log(response);
+	// res.json(response);
+}
+
+async function suggestLL(req, res){
+	const currProp = new ObjectId(req.params.propID);
+	const newLL = req.body.LL;
+	console.log("IM SUGGESTINGNGNGN: "+ newLL)
+
+	let LLList = [];
+	const query = {_id : currProp};
+	let userCursor = await propCollection.find(query);
+	let properties = await userCursor.toArray();
+	if(properties[0].LL_list === undefined){
+		console.log("no list. before creating")
+		const filter = {_id : currProp};
+		const updateDocument = {
+			$set:{
+				LL_list : []
+			}
+		};
+		console.log("porp: no list. after defining update doc")
+		const result = await propCollection.updateOne(filter, updateDocument);
+		// res.json(result)
+		console.log("no list. after creating")
+	}
+	else{
+		LLList = properties[0].LL_list
+		console.log("PROP OF 0" + JSON.stringify(properties[0]))
+	}
+	console.log("list made. before pushing prop id")
+	await LLList.push(newLL)
+	console.log("after pushing prop id")
+	console.log("list "+LLList)
+	console.log("yes email")
+	
+
+	const filter = {_id : currProp};
+	const updateDocument = {
+		$set:{
+			LL_list : LLList
+		}
+	};
+	const result = await propCollection.updateOne(filter, updateDocument);
+}
+
 app.get('/allProps', getAllProperties)
 app.get('/properties/:id', getProperty)
 app.get('/users/:email', getUser)
 app.get('/userID/:id', getUserFromID)
-app.get('/test/:time', test)
 app.get('/reviews/:propID', getRevFromProp)
+app.get('/props/:address', getPropFromAddy)
+app.get('/account/:userID', getRevFromUser)
+app.get('/ownerSearch/:owner', getRevFromOwner)
 
 app.post('/create/:email', jsonParser, createNewUser)
 app.post('/update/:address', jsonParser, addFormAddy)
 app.post('/postReview/:userID', jsonParser, postReview)
+app.post('/LLsug/:propID', jsonParser, suggestLL)
 
 
 app.listen(1995, function(){

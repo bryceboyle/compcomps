@@ -12,8 +12,6 @@ class AccountPage extends React.Component {
             propertyObj : null
         }
         this._handleBackClick = this._handleBackClick.bind(this);
-        // this._showResults = this._showResults.bind(this);
-        // this._handleStateChange = this._handleStateChange.bind(this);
     }
 
     componentDidMount(){
@@ -21,16 +19,16 @@ class AccountPage extends React.Component {
         uri_id = decodeURI(uri_id.substring(uri_id.lastIndexOf("/") + 1))
         this.setState({id:uri_id})
 
-        fetch(`http://localhost:1995/properties/${uri_id}`)
+        fetch(`http://localhost:1995/account/${uri_id}`)
             .then(response => response.json())
             .then(result =>{
-                console.log(JSON.stringify(result))
+                console.log("result "+JSON.stringify(result))
                 this.setState({propertyObj:result})
             })
     }
 
     _handleBackClick(){
-        window.location.href = "/search"
+        window.location.href = "/"
     }
 
 
@@ -38,7 +36,7 @@ class AccountPage extends React.Component {
         return(
             <div>
                 <button onClick={this._handleBackClick}> back </button> 
-                <h1>{JSON.stringify(this.state.propertyObj)}</h1>
+                <h4>{JSON.stringify(this.state.propertyObj)}</h4>
             </div>
         )
     }

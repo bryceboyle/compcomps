@@ -11,7 +11,7 @@ class SearchPage extends React.Component {
             options : ['Name', 'Address'],
             selected : "addy",
             inputValue : "",    // just house number for now
-            safetyInfo : [],
+            propertyList : [],
             heckList : [],
             hasHecked : false,
             hasSearched : false,
@@ -20,7 +20,9 @@ class SearchPage extends React.Component {
             "SIGNS" : "signs?", "XXX" : "bro who knows", "GENERAL" : "general?", "CITATIONS" : "citations?"
             },
             id : "0",
-            userEmail : ""
+            userEmail : "",
+            userID : "",
+            isLoggedIn : false
         }
         this._onSelect = this._onSelect.bind(this);
         this._handleChange = this._handleChange.bind(this);
@@ -31,6 +33,19 @@ class SearchPage extends React.Component {
         this._convertAddress = this._convertAddress.bind(this);
         this._heck = this._heck.bind(this);
         this._handleStateChange = this._handleStateChange.bind(this);
+    }
+
+    componentDidMount(){
+        let uri = window.location.href
+        let uri_user = ""
+        if(uri.substring(uri.lastIndexOf("/") + 1)=== "search"){
+            console.log("not logged in")
+        }
+        else{
+            uri_user = decodeURI(uri.substring(uri.lastIndexOf("/") + 1))
+            this.setState({isLoggedIn:true, userID:uri_user})
+            console.log("uuuuser id: " + uri_user)
+        }
     }
 
     _handleChange(e){
@@ -46,12 +61,32 @@ class SearchPage extends React.Component {
     }
 
     _handleStateChange(value){
-        this.setState({ userEmail : value })
+        // bro why does this next line work if this is called for both login and logout
+        this.setState({ userEmail : value, isLoggedIn : true})
         console.log("value: " + value)
+        console.log("type " + typeof value)
+        if(value !== ""){
+            fetch(`http://localhost:1995/create/${value}`, {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({})
+         })
+            .then(
+                fetch(`http://localhost:1995/users/${value}`)
+                    .then(response => response.json())
+                    .then(result =>{
+                        console.log("reesultlt " + JSON.stringify(result))
+                        this.setState({userID: result[0]._id})
+                })
+            )
+        }
+        else{
+            window.location.href = "/search"
+        }
     }
 
     _handleHomeCLick(){
-        window.location.href = "/"
+        window.location.href = "/" + this.state.userID 
     }
 
     _onSelect(){
@@ -76,7 +111,7 @@ class SearchPage extends React.Component {
     _showData(){
         if(this.state.hasSearched){
             if(this.state.selected === 'addy'){
-                const data = this.state.safetyInfo
+                const data = this.state.propertyList
                 console.log(data)
                 if(data.length !== 0){
                     return(
@@ -84,9 +119,7 @@ class SearchPage extends React.Component {
                                     return(
                                         <div>
                                             {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
-                                            <Property case_object={r} date={this._convertTimestamp(r.date_case_generated)}
-                                            address={this._convertAddress(r.address_house_number, r.address_house_fraction_number, r.address_street_direction, r.address_street_name, r.ddress_street_suffix, r.address_street_suffix_direction, r.address_zip)}
-                                            converted_case_type={this.state.case_code_dict[r.case_type]}/>
+                                            <Property whole_object={r} id={r._id}/>
                                             {/* <Property id={this.state.id}/> */}
                                             {/* <h1>this.state.id</h1> */}
                                         </div>
@@ -100,9 +133,26 @@ class SearchPage extends React.Component {
                 }
             }
             else{
-                return(
-                    <h2>oops sorry i havent made this yet</h2>
-                )
+                const data = this.state.propertyList
+                console.log(data)
+                if(data.length !== 0){
+                    return(
+                        data.map(r=>{
+                                    return(
+                                        <div>
+                                            {/* <h1>{r.case_type} {this._convertTimestamp(r.date_case_generated)}</h1> */}
+                                            <Property whole_object={r} id={r._id}/>
+                                            {/* <Property id={this.state.id}/> */}
+                                            {/* <h1>this.state.id</h1> */}
+                                        </div>
+                                    );
+                        }))
+                }
+                else{
+                    return(
+                        <h2>No Results Found</h2>
+                    )
+                }
             }
         }
         
@@ -115,40 +165,6 @@ class SearchPage extends React.Component {
         .then(response => response.json())
         .then(result =>{
             this.setState({heckList:result})
-
-            // UPDATING FORMATTED ADDRESS IN DB
-//             for(let i =0; i<result.length; i++){
-//                 let fixedAddy = "";
-//                 if(result[i].houseNum != null){
-//                     fixedAddy = fixedAddy + result[i].houseNum
-//                 }
-//                 if(result[i].streetDirPre != null){
-//                     fixedAddy = fixedAddy + " " + result[i].streetDirPre
-//                 }
-//                 if(result[i].streetName != null){
-//                     fixedAddy = fixedAddy + " " + result[i].streetName
-//                 }
-//                 if(result[i].streetSfx != null){
-//                     fixedAddy = fixedAddy + " " + result[i].streetSfx
-//                 }
-//                 if(result[i].streetDirPost != null){
-//                     fixedAddy = fixedAddy + " " + result[i].streetDirPost
-//                 }
-//                 if(result[i].zip != null){
-//                     fixedAddy = fixedAddy + " " + result[i].zip
-//                 }
-//                 console.log(fixedAddy)
-//                 console.log(result[i]._id)
-//                 fetch(`http://localhost:1995/update/${result[i]._id}`, {
-//                     method: "POST",
-//                     headers: {'Content-Type': 'application/json'},
-//                     body: JSON.stringify({
-//                         newAddress: fixedAddy
-//                     })
-//                 })
-//             }
-
-
         })
     }
 
@@ -167,40 +183,62 @@ class SearchPage extends React.Component {
     }
 
     _handleSearchClick(){
-        const input = this.state.inputValue;
+        let input = this.state.inputValue;
         this.setState({hasSearched : true})
-        if(input !== ""){
-            fetch(`https://data.lacity.org/resource/2uz8-3tj3.json?address_house_number=${input}`) // Building and Safety Code Enforcement Case
-            .then(response => response.json())
-            .then(result =>{
-                console.log(result)
-                console.log(this.state.selected)
-                this.setState({safetyInfo : result})
-            })
+        if(this.state.selected === "addy"){
+            if(input !== ""){
+                input = input.toUpperCase();
+                console.log("input: "+input);
+                if(input.lastIndexOf("BOULEVARD") !== -1){
+                    input = input.replace("BOULEVARD", "BLVD")
+                }
+                if(input.lastIndexOf("AVENUE") !== -1){
+                    input = input.replace("AVENUE", "AVE")
+                }
+                if(input.lastIndexOf("STREET") !== -1){
+                    input = input.replace("STREET", "ST")
+                }
+                if(input.lastIndexOf("COURT") !== -1){
+                    input = input.replace("COURT", "CT")
+                }
+                if(input.lastIndexOf("PLACE") !== -1){
+                    input = input.replace("PLACE", "PL")
+                }
+                if(input.lastIndexOf("DRIVE") !== -1){
+                    input = input.replace("DRIVE", "DR")
+                }
+                if(input.lastIndexOf("LANE") !== -1){
+                    input = input.replace("LANE", "LN")
+                }
+                console.log("converted: "+input)
+    
+                
+                fetch(`http://localhost:1995/props/${input}`)
+                .then(response => response.json())
+                .then(result =>{
+                    console.log("input "+input)
+                    console.log(result)
+                    console.log(this.state.selected)
+                    this.setState({propertyList : result})
+                })
+            }
+            else{
+                fetch("http://localhost:1995/allProps")
+                .then(response => response.json())
+                .then(result =>{
+                    console.log(result)
+                    console.log(this.state.selected)
+                    this.setState({propertyList : result})
+                })
+            }
         }
-        
+        // if(this.state.selected === "name"){
+        //     if(input !== ""){
 
-        // const input = this.state.inputValue;
-        // this.setState({hasSearched : true})
-        // if(input !== ""){ // FIXME 400 ERROR WHEN SEARCHING "A&I" FOR CASE TYPE
-        //     fetch(`https://data.lacity.org/resource/2uz8-3tj3.json`) // Building and Safety Code Enforcement Case
-        //     .then(response => response.json())
-        //     .then(result =>{
-        //         console.log(result)
-        //         console.log(this.state.selected)
-        //         this.setState({safetyInfo : result})
+        //     }
+        //     else{
 
-        //         // ------------ hecked stuff
-        //         const tempList = []
-        //         console.log(Object.keys(this.state.case_code_dict))
-        //         for(let i = 0; i < result.length; i++){
-        //             if(Object.keys(this.state.case_code_dict).includes(result[i].case_type) === false && result[i].case_type !== "GENERAL"){
-        //                 tempList.push(result[i])
-        //             }
-        //         }
-        //         this.setState({heckList : tempList})
-        //     })
-            
+        //     }
         // }
         
     }
@@ -209,11 +247,15 @@ class SearchPage extends React.Component {
         return(
             <div>
                 <h3 onClick={this._handleHomeCLick}>Home</h3>
-                <GoogleBtn _handleStateChange={this._handleStateChange}/>
+                <GoogleBtn _handleStateChange={this._handleStateChange} isLoggedIn={this.state.isLoggedIn}/>
                 <div>
                     <h1>Landlord Search</h1>
                 </div>
                 <div>
+                    {(this.state.selected === "addy")?
+                        <h4>enter an address in the form: street number street name zipcode</h4>
+                        : <h4>enter the property owner/ landlord name</h4>
+                    }
                     <div>
                         <select onChange={this._handleSelectChange}>
                             <option value="addy">Property Address</option>
@@ -222,12 +264,12 @@ class SearchPage extends React.Component {
                     </div>
                     <input type = "text" value = {this.state.inputValue} placeholder = "Search for property info!" onChange = {this._handleChange}></input>
                     <button onClick={this._handleSearchClick}> Search </button>
-                    <button onClick={this._heck}> heck </button>
+                    {/* <button onClick={this._heck}> heck </button> */}
                     {/* <button onClick={this._showData}>log data</button> */}
                 </div>
                 <div>
                     {/* {this._showData()} */}
-                    {this._showHeck()}
+                    {this._showData()}
                 </div>
             </div>
         )
@@ -235,4 +277,3 @@ class SearchPage extends React.Component {
 }
 
 export default SearchPage;
-// WILL NEED WITHROUTER EQUIVALENT

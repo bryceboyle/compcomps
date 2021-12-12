@@ -18,7 +18,8 @@ class SubmitReviewPage extends React.Component {
             pictureLink : "",
             hasSubmitted : false,
             isValid : false,
-            userid : ""
+            userid : "",
+            rating : ""
         }
         this._handleCancelClick = this._handleCancelClick.bind(this);
         this._handleSubmitClick = this._handleSubmitClick.bind(this);
@@ -29,6 +30,8 @@ class SubmitReviewPage extends React.Component {
         this._handleGeneralPropRevChange = this._handleGeneralPropRevChange.bind(this);
         this._getReviewResponse = this._getReviewResponse.bind(this);
         this._handlePictureChange = this._handlePictureChange.bind(this);
+        this._handleRatingChange = this._handleRatingChange.bind(this);
+        this._changeURI = this._changeURI.bind(this);
     }
 
     _handleRentChange(e){
@@ -40,6 +43,12 @@ class SubmitReviewPage extends React.Component {
     _handlePictureChange(e){
         this.setState({
             pictureLink: e.target.value
+        })
+    }
+
+    _handleRatingChange(e){
+        this.setState({
+            rating: e.target.value
         })
     }
 
@@ -107,8 +116,15 @@ class SubmitReviewPage extends React.Component {
             if(!Number.isInteger(parseInt(this.state.rentInput))){
                 return "Rent price can only be a whole number"
             }
+            if(!Number.isInteger(parseInt(this.state.rating))){
+                return "Rating must be a whole number between 1 and 5"
+            }
+            if(parseInt(this.state.rating) < 1 || parseInt(this.state.rating) > 5){
+                return "Rating must be a whole number between 1 and 5"
+            }
             if(!this.state.isValid){
                 this.setState({isValid : true});
+                console.log("goin in isvalid if")
             }
         }
         
@@ -116,14 +132,16 @@ class SubmitReviewPage extends React.Component {
     }
 
     _handleCancelClick(){
-        window.location.href = `/search/${this.state.propertyObj[0]._id}`
+        this._changeURI()
     }
     
     _handleSubmitClick(){
-        console.log(typeof this.state.rentInput)
+        console.log("is valid? " + this.state.isValid)
         this.setState({hasSubmitted:true});
+        console.log("result: " +this._getReviewResponse())
+        console.log("is valid? " + this.state.isValid)
         // post to db!
-        if(this.state.isValid){
+        if(this._getReviewResponse() === ""){
                 // console.log("response time: " + this.state.selected)
                 // console.log("LL: " + this.state.LLname)
                 // console.log("LL rev: " + this.state.generalLLReview)
@@ -140,7 +158,8 @@ class SubmitReviewPage extends React.Component {
                     LLRev : this.state.generalLLReview,
                     rent : this.state.rentInput,
                     propRev : this.state.generalPropReview,
-                    pics : this.state.pictureLink
+                    pics : this.state.pictureLink,
+                    overallRating : this.state.rating
                 };
                 console.log("email: "+this.state.userEmail)
                 console.log("type:" + typeof this.state.userEmail)
@@ -151,10 +170,31 @@ class SubmitReviewPage extends React.Component {
                         reviewObj : revObj
                        })
                  })
+                console.log("name: "+this.state.LLname)
+                if(this.state.LLname !== ""){
+                    fetch(`http://localhost:1995/LLsug/${this.state.propertyObj[0]._id}`, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            LL : this.state.LLname
+                           })
+                     })
+                }
+                fetch(`http://localhost:1995/properties/${this.state.propertyObj[0]._id}`)
+                    .then(response => response.json())
+                    .then(result =>{
+                        console.log(JSON.stringify("updated prop " + JSON.stringify(result)))
+                        this._changeURI();
+                })
+                
         }
         else{
             console.log("something is hecked")
         }              
+    }
+
+    _changeURI(){
+        window.location.href = `/property/${this.state.propertyObj[0]._id}-${this.state.userid}`
     }
 
 
@@ -181,10 +221,12 @@ class SubmitReviewPage extends React.Component {
                 <div>--------------------</div>
                 <div>How much do you pay in monthly rent?</div>
                 <div>$<input type = "text" value = {this.state.rentInput} placeholder = "" onChange = {this._handleRentChange}></input></div>
-                <div>If you want to include pictures, please enter google drive?? links separated by commas</div>
+                <div>If you want to include pictures, please enter google drive links separated by commas</div>
                 <div><input type = "text" value = {this.state.pictureLink} placeholder = "" onChange = {this._handlePictureChange}></input></div>
                 <div>Enter any other property-specific information you want to include below!</div>
                 <div><input type = "text" value = {this.state.generalPropReview} placeholder = "" onChange = {this._handleGeneralPropRevChange}></input></div>
+                <div>How would you rate your overall experience between 1 and 5? (1 being terrible, 5 being excellent)</div>
+                <div><input type = "text" value = {this.state.rating} placeholder = "" onChange = {this._handleRatingChange}></input></div>
                 <div>
                     <button onClick={this._handleSubmitClick}> submit </button>
                     <button onClick={this._handleCancelClick}> cancel </button>
