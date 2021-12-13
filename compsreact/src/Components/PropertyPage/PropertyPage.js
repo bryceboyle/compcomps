@@ -26,11 +26,16 @@ class PropertyPage extends React.Component {
             needLogin : false,
             reviewList : [],
             isLoggedIn : false,
-            LLlist : []
+            LLlist : [],
+            permits : [],
+            newDate : ""
         }
         this._handleBackClick = this._handleBackClick.bind(this);
         this._handleStateChange = this._handleStateChange.bind(this);
         this._handleReviewClick = this._handleReviewClick.bind(this);
+        this._showData = this._showData.bind(this);
+        this._showPermits = this._showPermits.bind(this);
+        this._convertTimestamp = this._convertTimestamp.bind(this);
     }
 
     componentDidMount(){
@@ -51,7 +56,7 @@ class PropertyPage extends React.Component {
             .then(response => response.json())
             .then(result =>{
                 console.log(JSON.stringify(result))
-                this.setState({propertyObj:result, formAdd:result[0].formattedAddress, owner:result[0].owner, quality:result[0].quality, LLlist:result[0].LL_list})
+                this.setState({propertyObj:result, formAdd:result[0].formattedAddress, owner:result[0].owner, quality:result[0].quality, LLlist:result[0].LL_list, permits:result[0].permits})
             })
         fetch(`http://localhost:1995/reviews/${uri_id}`)
             .then(response => response.json())
@@ -74,16 +79,61 @@ class PropertyPage extends React.Component {
         //     })
     }
 
+    _convertTimestamp(timestamp){
+        const date_only = timestamp.slice(0,10)
+        const month = date_only.slice(5,7)
+        const day = date_only.slice(8,10)
+        const year = date_only.slice(0,4)
+        const converted_date = month + "/" + day + "/" + year
+        return(converted_date)
+    }
+
+    _showPermits(){
+        if(this.state.permits !== [] && this.state.permits !== undefined){
+            return(
+                this.state.permits.map(r=>{
+                    if(r.permitNum !== null){
+                        if(r.workDesc !== null){
+                            if(r.timestamp !== null && r.timestamp !== "")
+                            return(
+                                <div>
+                                    <h3>permit issue date: {this._convertTimestamp(r.issueDate)}</h3>
+                                    <h3>permit type: {r.permitType}</h3>
+                                    <h3>description: {r.workDesc}</h3>
+                                    
+                                </div>
+                            );
+                        }
+                        else{
+                            return(
+                                <div>
+                                    <h3>permit issue date: {this._convertTimestamp(r.issueDate)}</h3>
+                                    <h3>permit type: {r.permitType}</h3>
+                                </div>
+                            );
+                        }
+                    }
+
+                    
+                }))
+        }
+        else{
+            return(
+                ""
+            )
+        }
+    }
+
     _showData(){
         if(this.state.reviewList.length !== 0){
+            return(
+                this.state.reviewList.map(r=>{
                     return(
-                        this.state.reviewList.map(r=>{
-                                    return(
-                                        <div>
-                                            <Review review_object={r} type="all"/>                    
-                                        </div>
-                                    );
-                        }))
+                        <div>
+                            <Review review_object={r} type="all"/>                    
+                        </div>
+                    );
+                }))
         }
         else{
             return(
@@ -158,7 +208,7 @@ class PropertyPage extends React.Component {
                     (this.state.LLlist.length > 1)?
                         <div>
                             <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
-                            <h3>other suggested names: {this.state.LLlist.slice(1)}</h3>
+                            <h3>other suggested names: {this.state.LLlist.slice(1).join(", ")}</h3>
                         </div>
                     :<div>
                         <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
@@ -176,6 +226,7 @@ class PropertyPage extends React.Component {
                     : ""
                 }
                 <div>
+                    {this._showPermits()}
                     {this._showData()}
                 </div>
             </div>

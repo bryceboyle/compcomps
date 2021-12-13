@@ -11,9 +11,12 @@ class Property extends React.Component {
             rating : 0
         }
         this._handleClick = this._handleClick.bind(this);
+        this._formatAddress = this._formatAddress.bind(this);
+        this._formatOwner = this._formatOwner.bind(this);
     }
 
     componentDidMount(){
+        this._formatOwner()
         this._formatAddress()
         console.log("id props " + this.props.id)
         this.setState({id: this.props.id})
@@ -25,7 +28,7 @@ class Property extends React.Component {
         fetch(`http://localhost:1995/reviews/${this.props.id}`)
             .then(response => response.json())
             .then(result =>{
-                console.log(JSON.stringify(result))
+                // console.log(JSON.stringify(result))
                 // go through results and get the rating for all then average them and display
                 let totalRating = 0;
                 if(result.length === 0){
@@ -40,6 +43,52 @@ class Property extends React.Component {
                 }
                 
             })
+    }
+
+    _formatOwner(){
+        // reordering not working consistently. also not done yet
+        // need to put spaces in and push formattedOwner to DB
+        // also ones with numbers shouldn't be reformatted (big if checking isALpha)
+        let fixedOwner = "";
+        // split names if there are multiple owners listed
+        let names = (this.props.whole_object.owner).split(";")
+        console.log("len "+names.length)
+        for(let i=0;i<names.length;i++){
+            // split one person's name into first, last, MI
+            let tempList = [];
+            let fixedName = ""
+            console.log("name1 "+names[i])
+            if(names[i].charAt(0)=== " "){
+                tempList = names[i]
+                tempList = tempList.substring(1)
+                tempList = tempList.split(" ");
+                console.log("space temp "+tempList)
+            }
+            else{
+                tempList = names[i].split(" ");
+            }
+            // rearrange into first middle last and fix capitalization
+            let temp1 = tempList[0]
+            tempList.splice(0, 1)
+            tempList.push(temp1)
+            console.log("firstlist "+tempList)
+            for(let j=0;j<tempList.length;j++){
+                let first = tempList[j].charAt(0)
+                if(tempList[j].length > 1){
+                    first = first + (tempList[j].toLowerCase()).substring(1)
+                    // tempList[j] = first
+                }
+                else{
+                    fixedName += first
+                }
+                if(j<tempList.length-1){
+                    fixedName += " "
+                }
+            }
+            console.log("fixed "+fixedName)
+
+        }
+        
     }
 
     _formatAddress(){
