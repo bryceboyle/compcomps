@@ -109,12 +109,12 @@ class Home extends React.Component {
             <div>
                 <div>
                 <div>
-                    <img src={this.state.pics} alt="loading"/>
-                    <p>{this.state.pics}</p>
+                    {/* <img src={this.state.pics} alt="loading"/>
+                    <p>{this.state.pics}</p> */}
                     {/* <img src={long} alt="weeee"/> */}
                     {/* <h3 onClick={this._handleAccountClick}>Account Info</h3> */}
                     <GoogleBtn _handleStateChange={this._handleStateChange} isLoggedIn={this.state.isLoggedIn}/>
-                    <h1>Landlord Lookup</h1>
+                    <h1 class="bitDown">Landlord Lookup</h1>
                     <h3>A Tenant-Focused Web Application for Rental Transparency</h3>
                 </div>
                 <div>
@@ -124,8 +124,19 @@ class Home extends React.Component {
                 </div>
                 <div>
                     <div>
-                            <h2>About Us</h2>
-                            <p>~~~~~</p>
+                            <h2>About This Site</h2>
+                            <p>Landlord-tenant relationships are often exploitative (especially when the tenants are college students), so it is important 
+                                to provide tenants with resources and accurate information about what to expect 
+                                when renting. That's why I created Landlord Lookup! This web application contains
+                                information about properties and their owners within the 90041 zipcode and is targeted towards students
+                                of Occidental college.</p>
+                            <p>Use Landlord Lookup to...</p>
+                            <p>1. Background-check a property after finding a place you are interested in (using something 
+                                like Zillow to find somewhere that meets your location, size, and ameneties preferences)</p>
+                            <p>2. Search through reviews of property owners and landlords</p>
+                            <p>2. Write reviews of properties you've lived at and landlords you have had in the past
+                                to provide future tenants with accurate rental information.
+                            </p>
                     </div>
                 </div>
                 

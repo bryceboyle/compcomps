@@ -12,8 +12,6 @@ class SearchPage extends React.Component {
             selected : "addy",
             inputValue : "",
             displayedList : [],
-            heckList : [],
-            hasHecked : false,
             hasSearched : false,
             case_code_dict : {"CNAP" : "Citywide Nuisance Abatement Program",  "NAR": "Nuisance Abatement Revocation", "NOID" : "Notice of Intent to Demolish",
             "PACE" : "Pro-Active Code Enforcement", "VEIP" : "Vehicle Establishment Inspection Program", "BILLBOARDS" : "Billboards?",
@@ -23,7 +21,8 @@ class SearchPage extends React.Component {
             userEmail : "",
             userID : "",
             isLoggedIn : false,
-            revPropDict : {}
+            revPropDict : {},
+            propOwnDict : {}
         }
         this._onSelect = this._onSelect.bind(this);
         this._handleChange = this._handleChange.bind(this);
@@ -32,11 +31,11 @@ class SearchPage extends React.Component {
         this._handleHomeCLick = this._handleHomeCLick.bind(this);
         this._handleSelectChange = this._handleSelectChange.bind(this);
         this._convertAddress = this._convertAddress.bind(this);
-        this._heck = this._heck.bind(this);
         this._handleStateChange = this._handleStateChange.bind(this);
         this._getFormAddy = this._getFormAddy.bind(this);
         this._frickle = this._frickle.bind(this);
         this._getPropURI = this._getPropURI.bind(this);
+        this._formatSelect = this._formatSelect.bind(this);
     }
 
     componentDidMount(){
@@ -176,9 +175,10 @@ class SearchPage extends React.Component {
                         data.map(r=>{                        
                             return(
                                 <div>
+                                    <h2>Owner(s): {this.state.propOwnDict[r._id]}</h2>
                                     <a href={this._getPropURI(r.propID)}>{this.state.revPropDict[r._id]}</a>
                                     <h3>Landlord rating: {r.LLrating}</h3>
-                                    <h3>Response time: {r.rTime}</h3>
+                                    <h3>Response time: {this._formatSelect(r.rTime)}</h3>
                                     {(r.LLRev !== "")?
                                     <h3>Review: {r.LLRev}</h3>
                                     : ""
@@ -198,27 +198,23 @@ class SearchPage extends React.Component {
         }
     }
 
-    _heck(){
-        this.setState({hasHecked:true})
-        fetch('http://localhost:1995/allProps/')
-        .then(response => response.json())
-        .then(result =>{
-            this.setState({heckList:result})
-        })
-    }
-
-    _showHeck(){
-        if(this.state.hasHecked){
-            const info = this.state.heckList
-            return(
-                info.map(r=>{
-                            return(
-                                <div>
-                                    <Property whole_object={r} id={r._id}/>
-                                </div>
-                            );
-                }))
+    _formatSelect(input){
+        if(input === "lessHour"){
+            return "Less than an hour"
         }
+        if(input === "fewHours"){
+            return "A few hours"
+        }
+        if(input === "sameDay"){
+            return "Within the same day"
+        }
+        if(input === "fewDays"){
+            return "A few days"
+        }
+        if(input === "more"){
+            return "More than a few days"
+        }
+        return ""
     }
 
     _handleSearchClick(){
@@ -287,8 +283,10 @@ class SearchPage extends React.Component {
                                     console.log("formAddy "+result2[0].formattedAddress)
                                     let tempObj = this.state.revPropDict
                                     tempObj[result[k]._id] = result2[0].formattedAddress
+                                    let tempObj2 = this.state.propOwnDict
+                                    tempObj2[result[k]._id] = result2[0].owner
                                     console.log("reererrecc "+JSON.stringify(tempObj))
-                                    this.setState({revPropDict:tempObj})
+                                    this.setState({revPropDict:tempObj, propOwnDict:tempObj2})
                                 })
                         }
                     })
@@ -303,14 +301,14 @@ class SearchPage extends React.Component {
     render(){
         return(
             <div>
-                <h3 onClick={this._handleHomeCLick}>Home</h3>
+                <h3 class="left" onClick={this._handleHomeCLick}>Home</h3>
                 <GoogleBtn _handleStateChange={this._handleStateChange} isLoggedIn={this.state.isLoggedIn}/>
                 <div>
-                    <h1>Landlord Search</h1>
+                    <h1 class="title">Landlord & Property Search</h1>
                 </div>
                 <div>
                     {(this.state.selected === "addy")?
-                        <h4>enter an address in the form: street number street name zipcode</h4>
+                        <h4>Search for a landlord name or property address</h4>
                         : <h4>enter the property owner/ landlord name</h4>
                     }
                     <div>
@@ -319,14 +317,11 @@ class SearchPage extends React.Component {
                             <option value="name">Landlord Name</option>
                         </select>
                     </div>
-                    <input type = "text" value = {this.state.inputValue} placeholder = "Search for property info!" onChange = {this._handleChange}></input>
+                    <input type = "text" value = {this.state.inputValue} onChange = {this._handleChange}></input>
                     <button onClick={this._handleSearchClick}> Search </button>
-                    {/* <button onClick={this._heck}> heck </button> */}
-                    {/* <button onClick={this._showData}>log data</button> */}
                 </div>
                 
-                <div>
-                    {/* {this._showData()} */}
+                <div class="centered">
                     {this._showData()}
                 </div>
             </div>

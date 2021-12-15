@@ -1,0 +1,17 @@
+.centered{
+    /* margin-right: auto;
+    margin-left: auto; */
+    text-align: center;
+    align-items: center;
+}
+
+.left {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    padding: 10px;
+  }
+
+.title{
+    padding-top: 10%;
+}

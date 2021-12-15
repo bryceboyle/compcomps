@@ -243,7 +243,7 @@ class SubmitReviewPage extends React.Component {
                     .then(response => response.json())
                     .then(result =>{
                         // console.log(JSON.stringify("updated prop " + JSON.stringify(result)))
-                        // this._changeURI();
+                        this._changeURI();
                 })
                 
         }

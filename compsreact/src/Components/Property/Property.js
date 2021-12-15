@@ -141,12 +141,12 @@ class Property extends React.Component {
 
     render(){
         return(
-            <div>
+            <div class="prop">
                 {/* <h2>{this.props.converted_case_type}</h2>
                 <h3>{this.props.date}</h3>
                 <h4>{this.props.address}</h4> */}
                 <h2> {this.props.whole_object.formattedAddress}</h2>
-                <h4> {this.props.whole_object.owner}</h4>
+                <h4> Property Owner: {this.props.whole_object.owner}</h4>
                 {(this.state.rating === -1)?
                     <h4>no reviews</h4>
                     : <h4> rating: {this.state.rating}</h4>                

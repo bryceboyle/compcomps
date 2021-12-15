@@ -30,14 +30,17 @@ class TenResource extends React.Component {
     render(){
         return(
             <div>
-                <button onClick={this._handleBackClick}> Back </button>
-                <h2>Resources</h2>
-                <a href="https://www.tenantstogether.org/resources/housing-rights-center-los-angeles">Housing Rights Center of LA</a><br/>
-                <a href="https://latenantsunion.org/en/">LA Tenants Union</a><br/>
-                <a href="https://housing.lacity.org">LA Housing Department</a><br/>
-                <a href="https://la.curbed.com/2017/4/19/15360412/renters-rights-los-angeles-california-eviction">List of renters' rights</a><br/>
-                <a href="https://www.nolo.com/legal-encyclopedia/overview-landlord-tenant-laws-california.html">California Landlord and Tenant laws</a>
-                <a href="https://www.tenantsincommon.org/resources">More resources</a>
+                <h3 class="left" onClick={this._handleBackClick}> Back </h3>
+                <h2 class="bitDown" id="resourceTitle">Resources</h2>
+                <a href="https://www.tenantstogether.org/resources/housing-rights-center-los-angeles">
+                    <h1 class="resources">Housing Rights Center of LA</h1></a><br/>
+                <a href="https://latenantsunion.org/en/"><h1 class="resources">LA Tenants Union</h1></a><br/>
+                <a href="https://housing.lacity.org"><h1 class="resources">LA Housing Department</h1></a><br/>
+                <a href="https://la.curbed.com/2017/4/19/15360412/renters-rights-los-angeles-california-eviction">
+                    <h1 class="resources">List of renters' rights</h1></a><br/>
+                <a href="https://www.nolo.com/legal-encyclopedia/overview-landlord-tenant-laws-california.html">
+                    <h1 class="resources">California Landlord and Tenant laws</h1></a><br/>
+                <a href="https://www.tenantsincommon.org/resources"><h1 class="resources">More resources</h1></a>
             </div>
         )
     }

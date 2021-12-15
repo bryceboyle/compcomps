@@ -203,9 +203,10 @@ class PropertyPage extends React.Component {
     render(){
         return(
             <div>
-                <button onClick={this._handleBackClick}> back </button>
+                <h3 class="left" onClick={this._handleBackClick}> Back </h3>
                 <GoogleBtn _handleStateChange={this._handleStateChange} isLoggedIn={this.state.isLoggedIn}/>
                 {/* <h1>{JSON.stringify(this.state.propertyObj)}</h1> */}
+                <div class="propTop">
                 <h2>{this.state.formAdd}</h2>
                 <h3>Owner(s): {this.state.owner}</h3>
                 {(this.state.LLlist !== undefined)?
@@ -214,23 +215,21 @@ class PropertyPage extends React.Component {
                             <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
                             <h3>other suggested names: {this.state.LLlist.slice(1).join(", ")}</h3>
                         </div>
-                    :<div>
+                    :(this.state.LLlist[0]!==undefined)?
+                    <div>
                         <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
                     </div>
-                : ""
-                
-                
-                }
-                
-                {/* <h3>quality: {this.state.quality}</h3> */}
-                {/* <img id="propimg" src={"https://static01.nyt.com/images/2021/09/14/science/07CAT-STRIPES/07CAT-STRIPES-mediumSquareAt3X-v2.jpg"} alt="property"/> */}
+                    :""
+                : ""}
+                {this._showPermits()}                       
                 <button onClick={this._handleReviewClick}> submit a review </button>
                 {(this.state.needLogin)?
                     <div>You must log in to write a review.</div>
                     : ""
                 }
+                <h2>Reviews:</h2>
+                </div>
                 <div>
-                    {this._showPermits()}
                     {this._showData()}
                 </div>
             </div>

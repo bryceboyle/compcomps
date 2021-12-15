@@ -1,0 +1,11 @@
+.rev{
+    border-style: solid;
+    border-bottom: black;
+    border-width: 1px;
+    padding: 20px;
+}
+
+image{
+    max-width: 10%;
+    height: auto;
+}
