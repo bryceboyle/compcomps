@@ -117,26 +117,28 @@ class Home extends React.Component {
                     <h1 class="bitDown">Landlord Lookup</h1>
                     <h3>A Tenant-Focused Web Application for Rental Transparency</h3>
                 </div>
-                <div>
-                    <button onClick={this._handleResourceClick}>Tenant Resources!</button>
-                    <button onClick={this._handleSearchClick}>Search for landlord & property info!</button>
+                <div class="buttonContainer">
+                    <button class="homeButtons" onClick={this._handleResourceClick}>Tenant Resources!</button>
+                    <button class="homeButtons" onClick={this._handleSearchClick}>Search for landlord & property info!</button>
                 </div>
                 </div>
                 <div>
-                    <div>
-                            <h2>About This Site</h2>
-                            <p>Landlord-tenant relationships are often exploitative (especially when the tenants are college students), so it is important 
-                                to provide tenants with resources and accurate information about what to expect 
-                                when renting. That's why I created Landlord Lookup! This web application contains
-                                information about properties and their owners within the 90041 zipcode and is targeted towards students
-                                of Occidental college.</p>
-                            <p>Use Landlord Lookup to...</p>
-                            <p>1. Background-check a property after finding a place you are interested in (using something 
-                                like Zillow to find somewhere that meets your location, size, and ameneties preferences)</p>
-                            <p>2. Search through reviews of property owners and landlords</p>
-                            <p>2. Write reviews of properties you've lived at and landlords you have had in the past
-                                to provide future tenants with accurate rental information.
-                            </p>
+                    <div class="about">
+                        <h2>About This Site</h2>
+                        <p class="aboutText">Landlord-tenant relationships are often exploitative (especially when the tenants are college students), so it is important 
+                            to provide tenants with resources and accurate information about what to expect 
+                            when renting. That's why I created Landlord Lookup! This web application contains
+                            information about properties and their owners within the 90041 zipcode and is targeted towards students
+                            of Occidental college.</p>
+                    </div>
+                    <div class="howToUse">
+                        <h3>Use Landlord Lookup to...</h3>
+                        <p>1. Background-check a property after finding a place you are interested in (using something 
+                            like Zillow to find somewhere that meets your location, size, and amenities preferences)</p>
+                        <p>2. Search through reviews of property owners and landlords</p>
+                        <p>2. Write reviews of properties you've lived at and landlords you have had in the past
+                            to provide future tenants with accurate rental information.
+                        </p>
                     </div>
                 </div>
                 

@@ -203,32 +203,36 @@ class PropertyPage extends React.Component {
     render(){
         return(
             <div>
-                <h3 class="left" onClick={this._handleBackClick}> Back </h3>
-                <GoogleBtn _handleStateChange={this._handleStateChange} isLoggedIn={this.state.isLoggedIn}/>
-                {/* <h1>{JSON.stringify(this.state.propertyObj)}</h1> */}
-                <div class="propTop">
-                <h2>{this.state.formAdd}</h2>
-                <h3>Owner(s): {this.state.owner}</h3>
-                {(this.state.LLlist !== undefined)?
-                    (this.state.LLlist.length > 1)?
+                <div class="topPropPage">
+                    <h3 class="left" onClick={this._handleBackClick}> Back </h3>
+                    <GoogleBtn _handleStateChange={this._handleStateChange} isLoggedIn={this.state.isLoggedIn}/>
+                    {/* <h1>{JSON.stringify(this.state.propertyObj)}</h1> */}
+                    <div class="propTop">
+                    <h2>{this.state.formAdd}</h2>
+                    <h3>Owner(s): {this.state.owner}</h3>
+                    {(this.state.LLlist !== undefined)?
+                        (this.state.LLlist.length > 1)?
+                            <div>
+                                <h3>Most recently suggested landlord name(s): {this.state.LLlist[0]}</h3>
+                                <h3>Other suggested names: {this.state.LLlist.slice(1).join(", ")}</h3>
+                            </div>
+                        :(this.state.LLlist[0]!==undefined)?
                         <div>
                             <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
-                            <h3>other suggested names: {this.state.LLlist.slice(1).join(", ")}</h3>
                         </div>
-                    :(this.state.LLlist[0]!==undefined)?
-                    <div>
-                        <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
+                        :""
+                    : ""}
+                    {this._showPermits()}                       
+                    <button class="subRevButton" onClick={this._handleReviewClick}> Submit a review </button>
+                    {(this.state.needLogin)?
+                        <div>You must log in to write a review.</div>
+                        : ""
+                    }
                     </div>
-                    :""
-                : ""}
-                {this._showPermits()}                       
-                <button onClick={this._handleReviewClick}> submit a review </button>
-                {(this.state.needLogin)?
-                    <div>You must log in to write a review.</div>
-                    : ""
-                }
-                <h2>Reviews:</h2>
                 </div>
+                    <h2>Reviews:</h2>
+                    
+                
                 <div>
                     {this._showData()}
                 </div>

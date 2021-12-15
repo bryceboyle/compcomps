@@ -259,47 +259,51 @@ class SubmitReviewPage extends React.Component {
 
     render(){
         return(
-            <div>
-                <input type="file" onChange={this._preview2}/>
-                <img src="" alt=""/>
-                {/* <img src={this.state.image} alt="reee"/> */}
+            <div class="subRevPage">
                 <h2>Submit a review for {this.state.formAdd}</h2>
-                <div>On average, how long does it take for your landlord to respond to your calls or messages? (required)</div>
-                <div>
-                    <select onChange={this._handleSelectChange}>
-                        {/* make sure that they can't submit if "select" is selected */}
-                        <option value="select">select</option>
-                        <option value="lessHour">Less than an hour</option>
-                        <option value="fewHours">A few hours</option>
-                        <option value="sameDay">Within the same day</option>
-                        <option value="fewDays">A few days</option>
-                        <option value="more">More than a few days</option>
-                    </select>
+                <div class="reviewInfoContainer">
+                    <div class="revQ">On average, how long does it take for your landlord to respond to your calls or messages? (required)
+                    <div>
+                        <select onChange={this._handleSelectChange}>
+                            {/* make sure that they can't submit if "select" is selected */}
+                            <option value="select">select</option>
+                            <option value="lessHour">Less than an hour</option>
+                            <option value="fewHours">A few hours</option>
+                            <option value="sameDay">Within the same day</option>
+                            <option value="fewDays">A few days</option>
+                            <option value="more">More than a few days</option>
+                        </select>
+                    </div>
+                    </div>
+                    <div class="revQ">If the property's owner {this.state.owner} is not your landlord or leasing manager, please enter their name below. If you have multiple landlords, enter their names separated by ampersands.
+                    <div><input class="longer" type = "text" value = {this.state.LLname} placeholder = "" onChange = {this._handleLLChange}></input></div></div>
+                    <div class="revQ">Enter any other landlord-specific information you want to include below!
+                    <div><textarea class="bigBox" type = "text" value = {this.state.generalLLReview} placeholder = "" onChange = {this._handleGeneralLLRevChange}></textarea></div></div>
+                    <div class="revQ">How would you rate your overall experience with this landlord between 1 and 5? (1 being terrible, 5 being excellent) (required)
+                    <div><input type = "text" value = {this.state.LLrating} placeholder = "" onChange = {this._handleLLRatingChange}></input></div></div>
+                    <div>--------------------------------------------------------------------------------</div>
+                    <div class="revQ">How much do you pay in monthly rent? (required)
+                    <div>$<input type = "text" value = {this.state.rentInput} placeholder = "" onChange = {this._handleRentChange}></input></div></div>
+                    <div class="revQ">Enter any other property-specific information you want to include below!
+                    <div><textarea class="bigBox" type = "text" value = {this.state.generalPropReview} placeholder = "" onChange = {this._handleGeneralPropRevChange}></textarea></div></div>
+                    <div class="revQ">How would you rate your experience living at this property between 1 and 5? (required)
+                    <div><input type = "text" value = {this.state.propRating} placeholder = "" onChange = {this._handlePropRatingChange}></input></div></div>
+                    <div class="revQLast">If you want to include pictures of the property, please upload them here.
+                    <div><input type="file" onChange={this._preview2}/></div></div>
                 </div>
-                <div>If the property's owner {this.state.owner} is not your landlord or leasing manager, please enter their name below. If you have multiple landlords, enter their names separated by commas.</div>
-                <div><input type = "text" value = {this.state.LLname} placeholder = "" onChange = {this._handleLLChange}></input></div>
-                <div>Enter any other landlord-specific information you want to include below!</div>
-                <div><input type = "text" value = {this.state.generalLLReview} placeholder = "" onChange = {this._handleGeneralLLRevChange}></input></div>
-                <div>How would you rate your overall experience with this landlord between 1 and 5? (1 being terrible, 5 being excellent)</div>
-                <div><input type = "text" value = {this.state.LLrating} placeholder = "" onChange = {this._handleLLRatingChange}></input></div>
-                <div>--------------------</div>
-                <div>How much do you pay in monthly rent? (required)</div>
-                <div>$<input type = "text" value = {this.state.rentInput} placeholder = "" onChange = {this._handleRentChange}></input></div>
-                <div>If you want to include pictures, please enter google drive links separated by commas</div>
-                <div><input type = "text" value = {this.state.pictureLink} placeholder = "" onChange = {this._handlePictureChange}></input></div>
-                <div>Enter any other property-specific information you want to include below!</div>
-                <div><input type = "text" value = {this.state.generalPropReview} placeholder = "" onChange = {this._handleGeneralPropRevChange}></input></div>
-                <div>How would you rate your experience living at this property between 1 and 5?</div>
-                <div><input type = "text" value = {this.state.propRating} placeholder = "" onChange = {this._handlePropRatingChange}></input></div>
-                <div>
-                    <button onClick={this._handleSubmitClick}> submit </button>
-                    <button onClick={this._handleCancelClick}> cancel </button>
-                </div>
-                {/* <img src={this.state.dataURL} alt="im waiting for upload"/> */}
-                    {(this.state.hasSubmitted)?
-                        <div>{this._getReviewResponse()}</div>
+                {(this.state.hasSubmitted)?
+                        <div class="res" >{this._getReviewResponse()}</div>
                         :""
                     }
+                <div class="revButtonContainer">
+                    <button class="subRevButtons" onClick={this._handleCancelClick}> Cancel </button>
+                    <button class="subRevButtons" onClick={this._handleSubmitClick}> Submit Review </button>
+                </div>
+                {(this.state.image !=="")?
+                    <p>Last uploaded image:</p>
+                    :""
+                }
+                <img src={this.state.image} alt=""/>
                     
             </div>
         )

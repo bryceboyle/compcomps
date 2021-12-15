@@ -79,7 +79,7 @@ class GoogleBtn extends Component {
 
     render(){
         return(
-            <div id="Gbutton">
+            <div class="right">
                 {this.props.isLoggedIn ?
                     this._handleLogin()
                     : ""

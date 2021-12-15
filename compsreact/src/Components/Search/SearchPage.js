@@ -174,10 +174,10 @@ class SearchPage extends React.Component {
                     return(
                         data.map(r=>{                        
                             return(
-                                <div>
+                                <div class="prop">
                                     <h2>Owner(s): {this.state.propOwnDict[r._id]}</h2>
                                     <a href={this._getPropURI(r.propID)}>{this.state.revPropDict[r._id]}</a>
-                                    <h3>Landlord rating: {r.LLrating}</h3>
+                                    <h3>★ rating: {r.LLrating}</h3>
                                     <h3>Response time: {this._formatSelect(r.rTime)}</h3>
                                     {(r.LLRev !== "")?
                                     <h3>Review: {r.LLRev}</h3>
@@ -301,15 +301,15 @@ class SearchPage extends React.Component {
     render(){
         return(
             <div>
-                <h3 class="left" onClick={this._handleHomeCLick}>Home</h3>
+                <h3 class="left" id="stick"onClick={this._handleHomeCLick}>Home</h3>
                 <GoogleBtn _handleStateChange={this._handleStateChange} isLoggedIn={this.state.isLoggedIn}/>
                 <div>
                     <h1 class="title">Landlord & Property Search</h1>
                 </div>
-                <div>
+                <div class="spaceBelow">
                     {(this.state.selected === "addy")?
-                        <h4>Search for a landlord name or property address</h4>
-                        : <h4>enter the property owner/ landlord name</h4>
+                        <div><h4>Search for a landlord name or property address</h4> <h5>To leave a review, search for the property.</h5></div>
+                        : <h4>Enter your property owner/landlord's name to see reviews of them</h4>
                     }
                     <div>
                         <select onChange={this._handleSelectChange}>
@@ -321,7 +321,7 @@ class SearchPage extends React.Component {
                     <button onClick={this._handleSearchClick}> Search </button>
                 </div>
                 
-                <div class="centered">
+                <div class="centered" >
                     {this._showData()}
                 </div>
             </div>

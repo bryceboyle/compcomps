@@ -1,0 +1,43 @@
+.reviewInfoContainer{
+    padding: 40px;
+}
+
+.revQ{
+    padding: 20px;
+}
+
+.revQLast{
+    padding-top: 20px;
+    padding-bottom: 0px;
+}
+
+.bigBox{
+    width: 500px;
+}
+
+.res{
+    padding-top: 0;
+    font-size: 24px;
+    padding-bottom: 20px;
+}
+
+.longer{
+    width: 300px
+}
+
+.subRevPage{
+    background-color: rgb(227, 253, 222);
+}
+
+.subRevButtons{
+    font-size: 14px;
+    padding: 10px;
+}
+
+.revButtonContainer{
+    margin: 0 auto;
+    max-width: 15%;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 50px;
+}

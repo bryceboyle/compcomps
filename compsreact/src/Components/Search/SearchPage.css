@@ -12,6 +12,16 @@
     padding: 10px;
   }
 
+#stick{
+    /* position: sticky; */
+    /* left: 0px;
+    padding: 10px; */
+}
+
 .title{
-    padding-top: 10%;
+    padding-top: 7%;
+}
+
+.spaceBelow{
+    /* padding-bottom: 20px; */
 }

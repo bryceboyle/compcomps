@@ -1,3 +1,34 @@
 .bitDown{
     padding-top: 2%;
 }
+
+.about{
+    padding-top: 20px;
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+.aboutText{
+    font-size: 18px;
+}
+
+.homeButtons{
+    padding: 10px;
+    font-size: 14px;
+    background-color: rgb(227, 253, 222);
+}
+
+.buttonContainer{
+    margin: 0 auto;
+    max-width: 30%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.howToUse{
+    border-radius: 20px;
+    padding: 10px;
+    background-color: rgb(203, 255, 193);
+    max-width: 95%;
+    margin: 0 auto;
+}
