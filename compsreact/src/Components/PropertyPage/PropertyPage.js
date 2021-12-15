@@ -99,9 +99,9 @@ class PropertyPage extends React.Component {
                             if(r.timestamp !== null && r.timestamp !== "")
                             return(
                                 <div>
-                                    <h3>permit issue date: {this._convertTimestamp(r.issueDate)}</h3>
-                                    <h3>permit type: {r.permitType}</h3>
-                                    <h3>description: {r.workDesc}</h3>
+                                    <h3>Permit issue date: {this._convertTimestamp(r.issueDate)}</h3>
+                                    <h3>Permit type: {r.permitType}</h3>
+                                    <h3>Description: {r.workDesc}</h3>
                                     
                                 </div>
                             );
@@ -109,8 +109,8 @@ class PropertyPage extends React.Component {
                         else{
                             return(
                                 <div>
-                                    <h3>permit issue date: {this._convertTimestamp(r.issueDate)}</h3>
-                                    <h3>permit type: {r.permitType}</h3>
+                                    <h3>Permit issue date: {this._convertTimestamp(r.issueDate)}</h3>
+                                    <h3>Permit type: {r.permitType}</h3>
                                 </div>
                             );
                         }
@@ -152,20 +152,25 @@ class PropertyPage extends React.Component {
         this.setState({ userEmail : value, needLogin : false, isLoggedIn : true})
         console.log("value: " + value)
         console.log("type " + typeof value)
-            
-        fetch(`http://localhost:1995/create/${value}`, {
+        if(value !== ""){
+            fetch(`http://localhost:1995/create/${value}`, {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({})
-         }).then(result=>{
+            }).then(result=>{
                 fetch(`http://localhost:1995/users/${value}`)
                 .then(response => response.json())
                 .then(result =>{
                     console.log("reesultlt " + JSON.stringify(result))
                     this.setState({userID: result[0]._id})
-            })
-            }
+                    })
+                }
             )
+        }
+        else{
+            window.location.href = "/property/"+this.state.id
+        }
+        
     }
 
     _handleBackClick(){
@@ -215,14 +220,14 @@ class PropertyPage extends React.Component {
                     <h2>{this.state.formAdd}</h2>
                     <h3>Owner(s): {this.state.owner}</h3>
                     {(this.state.LLlist !== undefined)?
-                        (this.state.LLlist.length > 1)?
+                        (this.state.LLlist.length > 2)?
                             <div>
-                                <h3>Most recently suggested landlord name(s): {this.state.LLlist[0]}</h3>
+                                <h3>Most recently suggested landlord name(s): {this.state.LLlist[1]}</h3>
                                 <h3>Other suggested names: {this.state.LLlist.slice(1).join(", ")}</h3>
                             </div>
-                        :(this.state.LLlist[0]!==undefined)?
+                        :(this.state.LLlist.length ===2)?
                         <div>
-                            <h3>most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
+                            <h3>Most recently suggested Landlord name(s): {this.state.LLlist[1]}</h3>
                         </div>
                         :""
                     : ""}

@@ -219,7 +219,7 @@ class SubmitReviewPage extends React.Component {
                 };
                 console.log("email: "+this.state.userEmail)
                 console.log("dataURLs: " + this.state.dataURLs)
-                console.log("size: " + this.state.dataURLs[0].length)
+                // console.log("size: " + this.state.dataURLs[0].length)
                 fetch(`http://localhost:1995/postReview/${this.state.userid}`, {
                     method: "POST",
                     headers: {'Content-Type': 'application/json'},

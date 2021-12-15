@@ -78,13 +78,15 @@ class Home extends React.Component {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({})
             })
-            .then(
+            .then(result=>{
                 fetch(`http://localhost:1995/users/${value}`)
                     .then(response => response.json())
                     .then(result =>{
                         console.log("reesultlt " + JSON.stringify(result))
                         this.setState({userID: result[0]._id})
                 })
+            }
+                
             )
         }
         else{
@@ -113,7 +115,7 @@ class Home extends React.Component {
                             to provide tenants with resources and accurate information about what to expect 
                             when renting. That's why I created Landlord Lookup! This web application contains
                             information about properties and their owners within the 90041 zipcode and is targeted towards students
-                            of Occidental college.</p>
+                            of Occidental College.</p>
                     </div>
                     <div class="howToUse">
                         <h3>Use Landlord Lookup to...</h3>

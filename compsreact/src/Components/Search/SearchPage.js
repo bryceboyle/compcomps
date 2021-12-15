@@ -76,13 +76,14 @@ class SearchPage extends React.Component {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({})
          })
-            .then(
+            .then(result=>{
                 fetch(`http://localhost:1995/users/${value}`)
                     .then(response => response.json())
                     .then(result =>{
                         console.log("reesultlt " + JSON.stringify(result))
                         this.setState({userID: result[0]._id})
                 })
+            }
             )
         }
         else{

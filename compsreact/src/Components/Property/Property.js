@@ -30,24 +30,21 @@ class Property extends React.Component {
             .then(result =>{
                 // console.log(JSON.stringify(result))
                 // go through results and get the rating for all then average them and display
-                let tempRating1 = 0;
                 let tempRating2 = 0;
-                let totalRating = 0;
                 if(result.length === 0){
                     this.setState({rating:-1})
                 }
                 else{
-                    for(let i=0; i<result.length; i++){
-                        tempRating1 += parseInt(result[i].LLrating)
-                    }
-                    tempRating1 = (tempRating1/result.length).toFixed(2);
+                    // for(let i=0; i<result.length; i++){
+                    //     tempRating1 += parseInt(result[i].LLrating)
+                    // }
+                    // tempRating1 = (tempRating1/result.length).toFixed(2);
 
                     for(let i=0; i<result.length; i++){
                         tempRating2 += parseInt(result[i].propRating)
                     }
                     tempRating2 = (tempRating2/result.length).toFixed(2);
-                    totalRating = (tempRating1+tempRating2)/2
-                    this.setState({rating:totalRating})
+                    this.setState({rating:tempRating2})
                 }
                 
             })
