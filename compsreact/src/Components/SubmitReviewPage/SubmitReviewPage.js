@@ -1,5 +1,6 @@
 import React from "react";
 import "./SubmitReviewPage.css";
+// import leak from "../../TestImages/janesLeakingDishwasher.png"
 
 class SubmitReviewPage extends React.Component {
     constructor(){
@@ -19,7 +20,13 @@ class SubmitReviewPage extends React.Component {
             hasSubmitted : false,
             isValid : false,
             userid : "",
-            rating : ""
+            LLrating : "",
+            propRating :"",
+            image : "",
+            source : "",
+            file : null,
+            dataURLs : [],
+            uploadCount : 0
         }
         this._handleCancelClick = this._handleCancelClick.bind(this);
         this._handleSubmitClick = this._handleSubmitClick.bind(this);
@@ -30,8 +37,52 @@ class SubmitReviewPage extends React.Component {
         this._handleGeneralPropRevChange = this._handleGeneralPropRevChange.bind(this);
         this._getReviewResponse = this._getReviewResponse.bind(this);
         this._handlePictureChange = this._handlePictureChange.bind(this);
-        this._handleRatingChange = this._handleRatingChange.bind(this);
+        this._handleLLRatingChange = this._handleLLRatingChange.bind(this);
+        this._handlePropRatingChange = this._handlePropRatingChange.bind(this);
         this._changeURI = this._changeURI.bind(this);
+        this._previewFile = this._previewFile.bind(this)
+        this._preview2 = this._preview2.bind(this)
+    }
+
+    _previewFile(){
+        console.log("im changin")
+        if(this.state.file !== null){
+            // let reader = new FileReader();
+            // reader.readAsDataURL(this.state.file)
+            // console.log("result "+reader.result)
+            // this.setState({source:leak})
+            console.log("im not null")
+        }
+    }
+
+    _preview2(){
+        if(document !== null){
+            if(document.querySelector('input[type=file]') !== null && this.state.uploadCount <6){
+                const b = this.state.uploadCount + 1
+                this.setState({uploadCount:b})
+                console.log("im changin")
+                const preview = document.querySelector('img');
+                const file = document.querySelector('input[type=file]').files[0];
+                console.log("file "+file)
+                const reader = new FileReader();
+                // this is awful and javascript is silly
+                const self = this
+                reader.addEventListener("load", function () {
+                // convert image file to base64 string dataURL
+                // console.log("reader ressize : "+reader.result.length);
+                let tempList = self.state.dataURLs
+                tempList.push(reader.result)
+                self.setState({dataURLs:tempList});
+                preview.src = reader.result;
+                }, false);
+            
+                if (file) {
+                    console.log("have a file")
+                    reader.readAsDataURL(file);
+                }
+            }
+
+        }
     }
 
     _handleRentChange(e){
@@ -46,9 +97,14 @@ class SubmitReviewPage extends React.Component {
         })
     }
 
-    _handleRatingChange(e){
+    _handleLLRatingChange(e){
         this.setState({
-            rating: e.target.value
+            LLrating: e.target.value
+        })
+    }
+    _handlePropRatingChange(e){
+        this.setState({
+            propRating: e.target.value
         })
     }
 
@@ -106,7 +162,6 @@ class SubmitReviewPage extends React.Component {
     }
 
     _getReviewResponse(){
-        if(this.state.hasSubmitted){
             if(this.state.selected === "select"){
                 return "Please select a landlord response time"
             }
@@ -116,19 +171,17 @@ class SubmitReviewPage extends React.Component {
             if(!Number.isInteger(parseInt(this.state.rentInput))){
                 return "Rent price can only be a whole number"
             }
-            if(!Number.isInteger(parseInt(this.state.rating))){
+            if(!Number.isInteger(parseInt(this.state.LLrating)) || !Number.isInteger(parseInt(this.state.propRating))){
                 return "Rating must be a whole number between 1 and 5"
             }
-            if(parseInt(this.state.rating) < 1 || parseInt(this.state.rating) > 5){
+            if(parseInt(this.state.LLrating) < 1 || parseInt(this.state.LLrating) > 5 || parseInt(this.state.propRating) < 1 || parseInt(this.state.propRating) > 5){
                 return "Rating must be a whole number between 1 and 5"
             }
             if(!this.state.isValid){
                 this.setState({isValid : true});
                 console.log("goin in isvalid if")
             }
-        }
-        
-        return ""
+            return ""
     }
 
     _handleCancelClick(){
@@ -141,6 +194,7 @@ class SubmitReviewPage extends React.Component {
         console.log("result: " +this._getReviewResponse())
         console.log("is valid? " + this.state.isValid)
         // post to db!
+    
         if(this._getReviewResponse() === ""){
                 // console.log("response time: " + this.state.selected)
                 // console.log("LL: " + this.state.LLname)
@@ -149,6 +203,8 @@ class SubmitReviewPage extends React.Component {
                 // console.log("prop rev: " + this.state.generalPropReview)
                 // window.location.href = `/search/${this.state.propertyObj[0]._id}`
                 console.log("is valid")
+
+                // CHECK TO SEE IF SOMEONE HAS ALREADY SUGGESTED LL NAME beofre pushing to db
 
                 let revObj = {
                     userID : this.state.userid,
@@ -159,15 +215,18 @@ class SubmitReviewPage extends React.Component {
                     rent : this.state.rentInput,
                     propRev : this.state.generalPropReview,
                     pics : this.state.pictureLink,
-                    overallRating : this.state.rating
+                    LLrating : this.state.LLrating,
+                    propRating : this.state.propRating
                 };
                 console.log("email: "+this.state.userEmail)
-                console.log("type:" + typeof this.state.userEmail)
+                console.log("dataURLs: " + this.state.dataURLs)
+                console.log("size: " + this.state.dataURLs[0].length)
                 fetch(`http://localhost:1995/postReview/${this.state.userid}`, {
                     method: "POST",
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        reviewObj : revObj
+                        reviewObj : revObj,
+                        imageList : this.state.dataURLs
                        })
                  })
                 console.log("name: "+this.state.LLname)
@@ -183,8 +242,8 @@ class SubmitReviewPage extends React.Component {
                 fetch(`http://localhost:1995/properties/${this.state.propertyObj[0]._id}`)
                     .then(response => response.json())
                     .then(result =>{
-                        console.log(JSON.stringify("updated prop " + JSON.stringify(result)))
-                        this._changeURI();
+                        // console.log(JSON.stringify("updated prop " + JSON.stringify(result)))
+                        // this._changeURI();
                 })
                 
         }
@@ -201,8 +260,11 @@ class SubmitReviewPage extends React.Component {
     render(){
         return(
             <div>
+                <input type="file" onChange={this._preview2}/>
+                <img src="" alt=""/>
+                {/* <img src={this.state.image} alt="reee"/> */}
                 <h2>Submit a review for {this.state.formAdd}</h2>
-                <div>On average, how long does it take for your landlord to respond to your calls or messages?</div>
+                <div>On average, how long does it take for your landlord to respond to your calls or messages? (required)</div>
                 <div>
                     <select onChange={this._handleSelectChange}>
                         {/* make sure that they can't submit if "select" is selected */}
@@ -218,20 +280,27 @@ class SubmitReviewPage extends React.Component {
                 <div><input type = "text" value = {this.state.LLname} placeholder = "" onChange = {this._handleLLChange}></input></div>
                 <div>Enter any other landlord-specific information you want to include below!</div>
                 <div><input type = "text" value = {this.state.generalLLReview} placeholder = "" onChange = {this._handleGeneralLLRevChange}></input></div>
+                <div>How would you rate your overall experience with this landlord between 1 and 5? (1 being terrible, 5 being excellent)</div>
+                <div><input type = "text" value = {this.state.LLrating} placeholder = "" onChange = {this._handleLLRatingChange}></input></div>
                 <div>--------------------</div>
-                <div>How much do you pay in monthly rent?</div>
+                <div>How much do you pay in monthly rent? (required)</div>
                 <div>$<input type = "text" value = {this.state.rentInput} placeholder = "" onChange = {this._handleRentChange}></input></div>
                 <div>If you want to include pictures, please enter google drive links separated by commas</div>
                 <div><input type = "text" value = {this.state.pictureLink} placeholder = "" onChange = {this._handlePictureChange}></input></div>
                 <div>Enter any other property-specific information you want to include below!</div>
                 <div><input type = "text" value = {this.state.generalPropReview} placeholder = "" onChange = {this._handleGeneralPropRevChange}></input></div>
-                <div>How would you rate your overall experience between 1 and 5? (1 being terrible, 5 being excellent)</div>
-                <div><input type = "text" value = {this.state.rating} placeholder = "" onChange = {this._handleRatingChange}></input></div>
+                <div>How would you rate your experience living at this property between 1 and 5?</div>
+                <div><input type = "text" value = {this.state.propRating} placeholder = "" onChange = {this._handlePropRatingChange}></input></div>
                 <div>
                     <button onClick={this._handleSubmitClick}> submit </button>
                     <button onClick={this._handleCancelClick}> cancel </button>
                 </div>
-                    <div>{this._getReviewResponse()}</div>
+                {/* <img src={this.state.dataURL} alt="im waiting for upload"/> */}
+                    {(this.state.hasSubmitted)?
+                        <div>{this._getReviewResponse()}</div>
+                        :""
+                    }
+                    
             </div>
         )
     }

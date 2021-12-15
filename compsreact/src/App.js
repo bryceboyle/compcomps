@@ -18,7 +18,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home/>}/>
           <Route path="/:userID" element={<Home/>}/>
-            <Route path="resources" element={<TenResource/>}/>
+          <Route path="resources" element={<TenResource/>}/>
+            <Route path="resources/:userID" element={<TenResource/>}/>
             {/* <Route path="search" element={<SearchPage/>}>
               <Route path=":id" element={<PropertyPage/>}/>
             </Route> */}

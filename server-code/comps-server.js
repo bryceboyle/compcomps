@@ -9,11 +9,14 @@ const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 const app = express();
 const jsonParser = bodyParser.json();
+app.use(express.json({limit:'5mb'}))
+app.use(express.urlencoded({limit:'5mb'}))
 app.use(cors());
 
 let database = null;
 let propCollection = null;
 let userCollection = null;
+let imageCollection = null
 
 async function connectDB(){
 	// console.log(client);
@@ -27,8 +30,7 @@ async function connectDB(){
 	propCollection = database.collection("property-info");
 	userCollection = database.collection("user-acct-info");
 	revCollection = database.collection("reviews");
-	
-
+	imageCollection = database.collection("review-images");
 }
 connectDB();
 
@@ -42,6 +44,31 @@ async function getAllProperties(req, res){
 	const response = props;
 	res.json(response);
 }
+
+async function addImage(req, res){
+	const revID = req.params.revID;
+	console.log("adding :"+revID)
+	const img = req.body.img
+	const result = await imageCollection.insertOne({
+		revId : revID,
+		image : img
+		});
+	res.json(result)
+	console.log("res "+JSON.stringify(result))
+}
+
+async function getImage(req, res){
+	let revID = ObjectId(req.params.revID);
+	console.log("id: " +revID);
+	const query = {revID : revID};
+	let propsCursor = await imageCollection.find(query);
+	let properties = await propsCursor.toArray();
+
+	const response = properties;
+	console.log(response);
+	res.json(response);
+}
+
 
 async function createNewUser(req, res){
 	const currEmail = req.params.email;
@@ -83,7 +110,16 @@ async function postReview(req, res){
 	let userid = new ObjectId(req.params.userID);
 	const postResult = await revCollection.insertOne(req.body.reviewObj);
 	res.json(postResult)
-	let revId = JSON.stringify(postResult.insertedId);
+	let list = req.body.imageList
+	let revId = postResult.insertedId;
+	for(let i =0;i<req.body.imageList.length; i++){
+		const postResult = await imageCollection.insertOne(
+		{
+			revID: revId,
+			URL : req.body.imageList[i]
+		});
+	}
+	
 
 	// check for existing user
 	let revList = [];
@@ -294,11 +330,13 @@ app.get('/props/:address', getPropFromAddy)
 app.get('/account/:userID', getRevFromUser)
 app.get('/ownerSearch/:owner', getRevFromOwner)
 app.get('/meep', ree)
+app.get('/getImg/:revID', getImage)
 
 app.post('/create/:email', jsonParser, createNewUser)
 app.post('/update/:address', jsonParser, addFormAddy)
 app.post('/postReview/:userID', jsonParser, postReview)
 app.post('/LLsug/:propID', jsonParser, suggestLL)
+app.post('/addImg/:revID', jsonParser, addImage)
 
 
 app.listen(1995, function(){

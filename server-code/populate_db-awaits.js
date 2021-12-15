@@ -172,29 +172,14 @@ async function connectDB(){
         }
         propInfoList.push(newObj);
         
-        insertStuff(newObj)
+        insertStuff(newObj);
         console.log("new obj " + JSON.stringify(newObj))
         
         
     }
-        // console.log("proplist: " + propInfoList[0]["workDesc"] + " " + propInfoList[0]["caseNum"])
-        // insertStuff(propInfoList)
-    console.log("after the loop")
-
-        // if(true){
-        // 	while(propInfoList.length === 0 || propInfoList[0]["workDesc"]===undefined){
-        // 		// console.log("in while")
-        // 	}
-        // 	console.log("AFTER")
-        // 	// console.log("proplist: " + propInfoList[0]["workDesc"] + " " + propInfoList[0]["caseNum"])
-        // }
+    console.log("done populating")
 
 }
-
-
-// const temp = await collection.insertMany(propInfoList);
-// console.log(temp.insertedCount);
-
 
 
 async function insertStuff(data){
@@ -204,10 +189,3 @@ async function insertStuff(data){
 
 connectDB();
 client.close();
-
-// NEXT STEPS: find a better way to get from estated api to other 2 govt apis because
-// just using some address information doesn't get accurate results
-// also using book-page-parcel from building works sometimes. zipcodes are off
-// also there are multiple objects w same ain in parcel data... so need
-// to check for repeats before fetching other stuff. but now that there's
-// no list i dunno what to 

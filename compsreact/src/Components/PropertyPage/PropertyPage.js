@@ -28,7 +28,8 @@ class PropertyPage extends React.Component {
             isLoggedIn : false,
             LLlist : [],
             permits : [],
-            newDate : ""
+            newDate : "",
+            pics : []
         }
         this._handleBackClick = this._handleBackClick.bind(this);
         this._handleStateChange = this._handleStateChange.bind(this);
@@ -61,6 +62,7 @@ class PropertyPage extends React.Component {
         fetch(`http://localhost:1995/reviews/${uri_id}`)
             .then(response => response.json())
             .then(result =>{
+                console.log("TYYYPPPEE "+typeof result)
                 console.log("reviews "+JSON.stringify(result))
                 console.log(result.length)
                 this.setState({reviewList : result})
@@ -113,21 +115,23 @@ class PropertyPage extends React.Component {
                             );
                         }
                     }
-
-                    
+                    return(
+                        ""
+                    );
                 }))
         }
-        else{
+        
             return(
                 ""
-            )
-        }
+            );
+        
     }
 
     _showData(){
         if(this.state.reviewList.length !== 0){
             return(
                 this.state.reviewList.map(r=>{
+                    
                     return(
                         <div>
                             <Review review_object={r} type="all"/>                    
@@ -202,8 +206,8 @@ class PropertyPage extends React.Component {
                 <button onClick={this._handleBackClick}> back </button>
                 <GoogleBtn _handleStateChange={this._handleStateChange} isLoggedIn={this.state.isLoggedIn}/>
                 {/* <h1>{JSON.stringify(this.state.propertyObj)}</h1> */}
-                <h2>address: {this.state.formAdd}</h2>
-                <h3>owner: {this.state.owner}</h3>
+                <h2>{this.state.formAdd}</h2>
+                <h3>Owner(s): {this.state.owner}</h3>
                 {(this.state.LLlist !== undefined)?
                     (this.state.LLlist.length > 1)?
                         <div>
@@ -218,7 +222,7 @@ class PropertyPage extends React.Component {
                 
                 }
                 
-                <h3>quality: {this.state.quality}</h3>
+                {/* <h3>quality: {this.state.quality}</h3> */}
                 {/* <img id="propimg" src={"https://static01.nyt.com/images/2021/09/14/science/07CAT-STRIPES/07CAT-STRIPES-mediumSquareAt3X-v2.jpg"} alt="property"/> */}
                 <button onClick={this._handleReviewClick}> submit a review </button>
                 {(this.state.needLogin)?

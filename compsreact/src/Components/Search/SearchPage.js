@@ -10,7 +10,7 @@ class SearchPage extends React.Component {
         this.state={
             options : ['Name', 'Address'],
             selected : "addy",
-            inputValue : "",    // just house number for now
+            inputValue : "",
             displayedList : [],
             heckList : [],
             hasHecked : false,
@@ -60,6 +60,8 @@ class SearchPage extends React.Component {
     }
     _handleSelectChange(e){
         this.setState({
+            displayedList: [],
+            hasSearched : false,
             selected: e.target.value,
         })
     }
@@ -175,6 +177,7 @@ class SearchPage extends React.Component {
                             return(
                                 <div>
                                     <a href={this._getPropURI(r.propID)}>{this.state.revPropDict[r._id]}</a>
+                                    <h3>Landlord rating: {r.LLrating}</h3>
                                     <h3>Response time: {r.rTime}</h3>
                                     {(r.LLRev !== "")?
                                     <h3>Review: {r.LLRev}</h3>
