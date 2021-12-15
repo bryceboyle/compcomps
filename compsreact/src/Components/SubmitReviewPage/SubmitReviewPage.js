@@ -152,7 +152,6 @@ class SubmitReviewPage extends React.Component {
                 console.log(JSON.stringify(result))
                 this.setState({propertyObj:result, formAdd:result[0].formattedAddress, owner:result[0].owner})
             })
-
         fetch(`http://localhost:1995/userID/${uri_user}`)
             .then(response => response.json())
             .then(result =>{

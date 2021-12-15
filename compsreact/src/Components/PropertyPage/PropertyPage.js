@@ -157,14 +157,14 @@ class PropertyPage extends React.Component {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({})
-         })
-            .then(
+         }).then(result=>{
                 fetch(`http://localhost:1995/users/${value}`)
-                    .then(response => response.json())
-                    .then(result =>{
-                        console.log("reesultlt " + JSON.stringify(result))
-                        this.setState({userID: result[0]._id})
-                })
+                .then(response => response.json())
+                .then(result =>{
+                    console.log("reesultlt " + JSON.stringify(result))
+                    this.setState({userID: result[0]._id})
+            })
+            }
             )
     }
 
@@ -179,14 +179,17 @@ class PropertyPage extends React.Component {
     }
 
     _handleReviewClick(){
+        console.log("em "+this.state.userEmail)
+        console.log("id "+this.state.userID)
         if(this.state.userEmail === "" && this.state.userID === ""){
             this.setState({needLogin : true})
+            console.log("1")
         }
         else{
-            if(this.state.userEmail === ""){
+            if(this.state.userEmail === "" && this.state.isLoggedIn){
                 window.location.href = `/review/${this.state.id + "-" +this.state.userID}`
             }
-            else{
+            else if(this.state.userID !== ""){
                 fetch(`http://localhost:1995/users/${this.state.userEmail}`)
                     .then(response => response.json())
                     .then(result =>{
@@ -196,6 +199,7 @@ class PropertyPage extends React.Component {
                         window.location.href = `/review/${this.state.id + "-" +this.state.userID}`
                     })
             }
+            console.log("2")
             
         }
     }
