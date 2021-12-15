@@ -220,14 +220,14 @@ class PropertyPage extends React.Component {
                     <h2>{this.state.formAdd}</h2>
                     <h3>Owner(s): {this.state.owner}</h3>
                     {(this.state.LLlist !== undefined)?
-                        (this.state.LLlist.length > 2)?
+                        (this.state.LLlist.length > 1)?
                             <div>
-                                <h3>Most recently suggested landlord name(s): {this.state.LLlist[1]}</h3>
+                                <h3>Most recently suggested landlord name(s): {this.state.LLlist[0]}</h3>
                                 <h3>Other suggested names: {this.state.LLlist.slice(1).join(", ")}</h3>
                             </div>
-                        :(this.state.LLlist.length ===2)?
+                        :(this.state.LLlist.length ===1)?
                         <div>
-                            <h3>Most recently suggested Landlord name(s): {this.state.LLlist[1]}</h3>
+                            <h3>Most recently suggested Landlord name(s): {this.state.LLlist[0]}</h3>
                         </div>
                         :""
                     : ""}
